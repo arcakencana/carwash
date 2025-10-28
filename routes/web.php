@@ -8,6 +8,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/register', function () {
+    return redirect('/login');
+});
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -25,6 +29,7 @@ Route::group(['middleware' => ['auth','role:admin']], function () {
 
     // User CRUD hanya untuk admin
     Route::resource('users', UserController::class);
+    Route::resource('kegiatan', App\Http\Controllers\KegiatanController::class);
 });
 
 Route::group(['middleware' => ['auth','role:user']], function () {
