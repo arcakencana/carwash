@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Kegiatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Crypt;
 
 class KegiatanController extends Controller
 {
@@ -26,7 +28,7 @@ class KegiatanController extends Controller
         }
 
         $kegiatans = $query->latest()->paginate(10);
-        $kegiatans->appends(['search' => $search]); // biar query search-nya tetap di pagination
+        $kegiatans->appends(['search' => $search]);
 
         return view('kegiatan.index', compact('kegiatans', 'search'));
     }
@@ -55,6 +57,16 @@ class KegiatanController extends Controller
         Kegiatan::create($data);
 
         return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil ditambahkan!');
+    }
+
+    public function show(string $id)
+    {
+        $id = decrypt($id);
+
+        $data['acara'] = Acara::with('ruangan')->where('id', $id)->first();
+        $data['title'] = $data['acara']->nama_acara; 
+        
+        return view('acara.show', $data);
     }
 
     public function edit(Kegiatan $kegiatan)
@@ -93,5 +105,16 @@ class KegiatanController extends Controller
         $kegiatan->delete();
 
         return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil dihapus!');
+    }
+
+    public function exportPdf($id)
+    {
+        $id = Crypt::decrypt($id);
+
+        $kegiatan = Kegiatan::where('id', $id)->first();
+
+        $pdf = Pdf::loadView('kegiatan.pdf', compact('kegiatan'));
+
+        return $pdf->stream('kegiatan.pdf');
     }
 }

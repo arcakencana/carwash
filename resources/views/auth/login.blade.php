@@ -1,12 +1,18 @@
 <x-guest-layout>
-
-    <div class="flex flex-col items-center mb-6">
-        <div class="flex items-center space-x-3">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 w-auto">
-            <span class="text-2xl font-bold text-gray-800 dark:text-gray-100">SITEBUS MURAH</span>
+    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-200">
+        <div>
+            <a href="/">
+                <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+            </a>
         </div>
-        <p class="text-gray-500 text-sm mt-1">Dinas Perindustrian dan Perdagangan Kota Batam</p>
-    </div>
+        <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+            <div class="flex flex-col items-center mb-6">
+                <div class="flex items-center space-x-3">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 w-auto">
+                    <span class="text-2xl font-bold text-gray-800 dark:text-gray-100">SITEBUS MURAH</span>
+                </div>
+                <p class="text-gray-500 text-sm mt-1">Dinas Perindustrian dan Perdagangan Kota Batam</p>
+            </div>
 
 <!-- Session Status -->
 <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -53,4 +59,6 @@
                 </x-primary-button>
             </div>
         </form>
-    </x-guest-layout>
+    </div>
+</div>
+</x-guest-layout>
