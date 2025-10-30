@@ -43,7 +43,7 @@
                         <div class="flex items-center justify-center bg-gray-50 dark:bg-gray-900">
                             <div class="p-4 text-center">
                                 <h2 class="text-xl items-center font-semibold text-gray-800 mb-2">Link Pendaftaran</h2>
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={{ urlencode(url("/notulen", ['id' => encrypt($kegiatan->id)])) }}" class="p-4">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={{ urlencode(url("/pendaftaran", encrypt($kegiatan->id))) }}" class="p-4">
                             </div>
                         </div>
 

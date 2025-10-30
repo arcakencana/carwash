@@ -15,3 +15,54 @@ if (
 }
 
 Alpine.start();
+
+function applyOnlyNumber(selector = '.only-number') {
+	const inputs = document.querySelectorAll(selector);
+	console.log('applyOnlyNumber aktif, ketemu', inputs.length, 'input');
+
+	inputs.forEach(input => {
+		input.addEventListener('input', function () {
+			this.value = this.value.replace(/\D/g, '');
+		});
+	});
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+	applyOnlyNumber();
+});
+
+function applyNumberRestriction(selector = '.only-number-16', maxLength = 16) {
+	const inputs = document.querySelectorAll(selector);
+	inputs.forEach(input => {
+		input.addEventListener('input', function () {
+        let val = this.value.replace(/\D/g, ''); // hanya angka
+        if (val.length > maxLength) val = val.slice(0, maxLength); // batasi panjang
+        this.value = val;
+    });
+	});
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+	applyNumberRestriction();
+});
+
+function applyUppercaseRestriction(selector = '.only-uppercase', maxLength = null) {
+	const inputs = document.querySelectorAll(selector);
+
+	inputs.forEach(input => {
+		input.addEventListener('input', function () {
+        // Hanya izinkan huruf (A-Z/a-z)
+			let val = this.value.replace(/[^a-zA-Z]/g, '');
+        // Ubah ke huruf kapital semua
+			val = val.toUpperCase();
+        // Batasi panjang jika diatur
+			if (maxLength && val.length > maxLength) val = val.slice(0, maxLength);
+        // Set kembali ke input
+			this.value = val;
+		});
+	});
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+	applyUppercaseRestriction();
+});

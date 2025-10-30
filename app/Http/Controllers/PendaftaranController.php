@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kegiatan;
+use App\Models\Kecamatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
 
-class KegiatanController extends Controller
+class PendaftaranController extends Controller
 {
     public function __construct()
     {
@@ -23,8 +24,11 @@ class KegiatanController extends Controller
     public function create($id)
     {
         $id = decrypt($id);
+
+        $data['kegiatan'] = Kegiatan::where('id', $id)->first();
+        $data['kecamatan'] = Kecamatan::get();
         
-        return view('pendaftaran.create');
+        return view('pendaftaran.create', $data);
     }
 
     public function store(Request $request)
