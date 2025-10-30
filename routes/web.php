@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
+Route::get('/home/{id}', [App\Http\Controllers\HomeController::class, 'show'])->name('home.show');
+Route::get('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::class, 'create'])->name('pendaftaran.create');
 
 Route::get('/register', function () {
     return redirect('/login');

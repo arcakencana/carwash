@@ -59,15 +59,15 @@ class KegiatanController extends Controller
         return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil ditambahkan!');
     }
 
-    public function show(string $id)
-    {
-        $id = decrypt($id);
+    // public function show(string $id)
+    // {
+    //     $id = decrypt($id);
 
-        $data['acara'] = Acara::with('ruangan')->where('id', $id)->first();
-        $data['title'] = $data['acara']->nama_acara; 
+    //     $data['acara'] = Acara::with('ruangan')->where('id', $id)->first();
+    //     $data['title'] = $data['acara']->nama_acara; 
         
-        return view('acara.show', $data);
-    }
+    //     return view('acara.show', $data);
+    // }
 
     public function edit(Kegiatan $kegiatan)
     {

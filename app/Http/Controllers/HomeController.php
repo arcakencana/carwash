@@ -13,4 +13,12 @@ class HomeController extends Controller
 
         return view('home.index', compact('kegiatans'));
     }
+
+    public function show(string $id)
+    {
+        $id = decrypt($id);
+        $data['kegiatan'] = Kegiatan::where('id', $id)->first(); 
+        
+        return view('home.show', $data);
+    }
 }
