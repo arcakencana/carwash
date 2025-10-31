@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kegiatan;
 use App\Models\Kecamatan;
+use App\Models\Pendaftaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -31,25 +32,38 @@ class PendaftaranController extends Controller
         return view('pendaftaran.create', $data);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $id)
     {
+        $id = decrypt($id);
+
         $request->validate([
-            'nama_kegiatan' => 'required|string|max:255',
-            'tanggal_kegiatan' => 'required|date',
-            'deskripsi' => 'nullable|string',
-            'kuota_peserta' => 'required|integer|min:1',
-            'banner' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'kk' => 'required|integer',
+            'ktp' => 'required|integer',
+            'nama' => 'required',
+            'whatsapp' => 'required|min:9',
+            'kecamatan_id' => 'required|integer',
+            'foto_kk' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $data = $request->only('nama_kegiatan', 'deskripsi', 'kuota_peserta');
-
-        if ($request->hasFile('banner')) {
-            $data['banner'] = $request->file('banner')->store('banners', 'public');
+        if ($request->hasFile('foto_kk')) {
+            $path = $request->file('foto_kk')->store('berkas', 'public');
         }
 
-        Kegiatan::create($data);
+        $data = Pendaftaran::create([
+            'kk' => $request->kk,
+            'ktp' => $request->ktp,
+            'nama' => $request->nama,
+            'whatsapp' => $request->whatsapp,
+            'berkas' => $path,
+            'kecamatan_id' => $request->kecamatan_id,
+            'kegiatan_id' => $id,
+        ]);
 
-        return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil ditambahkan!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil disimpan!',
+            'data' => $data
+        ]);
     }
 
     public function edit(Kegiatan $kegiatan)

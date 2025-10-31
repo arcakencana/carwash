@@ -20,5 +20,6 @@
     <div class="min-h-screen bg-gray-100 dark:bg-gray-100">
         {{ $slot }}
     </div>
+    @stack('scripts')
 </body>
 </html>

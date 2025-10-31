@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Pendaftaran extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [ 
+        'kk',
+        'ktp',
+        'nama',
+        'whatsapp',
+        'berkas',
+        'kecamatan_id',
+        'kegiatan_id',
+        'antrian',
+    ];
+    public $timestamps = false;
+}

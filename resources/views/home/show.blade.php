@@ -1,49 +1,77 @@
 <x-guest-layout>
+    <!-- Background full-page -->
+    <div class="relative min-h-screen bg-cover bg-center bg-fixed"
+    style="background-image: url('{{ asset('images/background.png') }}');
+        background-position: center top 0px;
+     background-size: contain;">
 
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-2 bg-gray-100 dark:bg-gray-200">
+     <!-- Overlay transparan -->
+     <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+
+     <!-- Konten utama -->
+     <div class="relative min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-2">
+
+        <!-- Logo -->
         <div>
             <a href="/">
-                <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+                <x-application-logo class="w-20 h-20 fill-current text-gray-200" />
             </a>
         </div>
-        <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+
+        <!-- Card utama (lebar diperbesar) -->
+        <div class="w-full sm:max-w-xl mt-6 px-8 py-6 bg-white bg-opacity-95 dark:bg-gray-800 shadow-lg overflow-hidden sm:rounded-lg backdrop-blur-sm">
+
+            <!-- Header -->
             <div class="flex flex-col items-center">
-                <div class="flex items-center space-x-3 mt-6">
+                <div class="flex items-center space-x-3 mt-4">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 w-auto">
                     <span class="text-2xl font-bold text-gray-800 dark:text-gray-100">SITEBUS MURAH</span>
                 </div>
-                <p class="text-gray-900 text-md mt-1">Dinas Perindustrian dan Perdagangan Kota Batam</p>
+                <p class="text-gray-700 dark:text-gray-300 text-sm mt-1">
+                    Dinas Perindustrian dan Perdagangan Kota Batam
+                </p>
             </div>
 
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-1 py-10">
+            <!-- Detail kegiatan -->
+            <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-1 py-8">
                 <div class="grid">
-                    <div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 hover:shadow-xl transition">
+                    <div class="bg-white dark:bg-gray-900 shadow-md rounded-lg overflow-hidden border border-gray-200 hover:shadow-xl transition duration-300">
+
                         @if($kegiatan->banner)
-                        <img src="{{ asset('storage/'.$kegiatan->banner) }}" alt="{{ $kegiatan->nama_kegiatan }}" class="w-full object-cover">
+                        <img src="{{ asset('storage/'.$kegiatan->banner) }}"
+                        alt="{{ $kegiatan->nama_kegiatan }}"
+                        class="w-full object-cover h-56 p-1">
                         @endif
 
                         <div class="p-4">
-                            <h2 class="text-xl font-semibold text-gray-800 mb-2">{{ $kegiatan->nama_kegiatan }}</h2>
+                            <h2 class="text-xl font-semibold text-gray-800 mb-2 dark:text-gray-100">
+                                {{ $kegiatan->nama_kegiatan }}
+                            </h2>
 
-                            <p class="text-gray-600 text-sm mb-3">
+                            <p class="text-gray-600 dark:text-gray-300 text-sm mb-3">
                                 {{ $kegiatan->deskripsi }}
                             </p>
 
-                            <p class="text-gray-500 text-sm">
+                            <p class="text-gray-500 text-sm mb-1">
                                 <strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($kegiatan->tanggal_kegiatan)->format('d M Y, H:i') }}
                             </p>
 
-                            <p class="text-gray-500 text-sm">
+                            <p class="text-gray-500 text-sm mb-3">
                                 <strong>Kuota:</strong> {{ $kegiatan->kuota_peserta }}
                             </p>
                         </div>
 
-                        <hr>
+                        <hr class="border-gray-300 dark:border-gray-700">
 
+                        <!-- QR Section -->
                         <div class="flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-                            <div class="p-4 text-center">
-                                <h2 class="text-xl items-center font-semibold text-gray-800 mb-2">Link Pendaftaran</h2>
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={{ urlencode(url("/pendaftaran", encrypt($kegiatan->id))) }}" class="p-4">
+                            <div class="p-6 text-center">
+                                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                                    Link Pendaftaran
+                                </h2>
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={{ urlencode(url('/pendaftaran', encrypt($kegiatan->id))) }}"
+                                alt="QR Pendaftaran"
+                                class="mx-auto rounded-lg shadow-md p-2 bg-white">
                             </div>
                         </div>
 
@@ -53,5 +81,5 @@
 
         </div>
     </div>
-
+</div>
 </x-guest-layout>

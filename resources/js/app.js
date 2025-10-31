@@ -18,7 +18,7 @@ Alpine.start();
 
 function applyOnlyNumber(selector = '.only-number') {
 	const inputs = document.querySelectorAll(selector);
-	console.log('applyOnlyNumber aktif, ketemu', inputs.length, 'input');
+	//console.log('applyOnlyNumber aktif, ketemu', inputs.length, 'input');
 
 	inputs.forEach(input => {
 		input.addEventListener('input', function () {
