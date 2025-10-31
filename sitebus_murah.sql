@@ -1,6 +1,6 @@
 /*
 SQLyog Ultimate v12.5.1 (64 bit)
-MySQL - 10.11.9-MariaDB-log : Database - sitebus_murah
+MySQL - 10.11.1-MariaDB-log : Database - sitebus_murah
 *********************************************************************
 */
 
@@ -14,8 +14,6 @@ MySQL - 10.11.9-MariaDB-log : Database - sitebus_murah
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 /*Table structure for table `cache` */
 
-DROP TABLE IF EXISTS `cache`;
-
 CREATE TABLE `cache` (
   `key` varchar(255) NOT NULL,
   `value` mediumtext NOT NULL,
@@ -27,8 +25,6 @@ CREATE TABLE `cache` (
 
 /*Table structure for table `cache_locks` */
 
-DROP TABLE IF EXISTS `cache_locks`;
-
 CREATE TABLE `cache_locks` (
   `key` varchar(255) NOT NULL,
   `owner` varchar(255) NOT NULL,
@@ -39,8 +35,6 @@ CREATE TABLE `cache_locks` (
 /*Data for the table `cache_locks` */
 
 /*Table structure for table `failed_jobs` */
-
-DROP TABLE IF EXISTS `failed_jobs`;
 
 CREATE TABLE `failed_jobs` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -57,8 +51,6 @@ CREATE TABLE `failed_jobs` (
 /*Data for the table `failed_jobs` */
 
 /*Table structure for table `job_batches` */
-
-DROP TABLE IF EXISTS `job_batches`;
 
 CREATE TABLE `job_batches` (
   `id` varchar(255) NOT NULL,
@@ -78,8 +70,6 @@ CREATE TABLE `job_batches` (
 
 /*Table structure for table `jobs` */
 
-DROP TABLE IF EXISTS `jobs`;
-
 CREATE TABLE `jobs` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `queue` varchar(255) NOT NULL,
@@ -94,9 +84,31 @@ CREATE TABLE `jobs` (
 
 /*Data for the table `jobs` */
 
-/*Table structure for table `kegiatans` */
+/*Table structure for table `kecamatans` */
 
-DROP TABLE IF EXISTS `kegiatans`;
+CREATE TABLE `kecamatans` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `kecamatans` */
+
+insert  into `kecamatans`(`id`,`name`) values 
+(1,'Batu Ampar'),
+(2,'Bengkong'),
+(3,'Nongsa'),
+(4,'Sungai Beduk'),
+(5,'Batu Aji'),
+(6,'Lubuk Baja'),
+(7,'Batam Kota'),
+(8,'Sekupang'),
+(9,'Sagulung'),
+(10,'Belakang Padang'),
+(11,'Bulang'),
+(12,'Galang');
+
+/*Table structure for table `kegiatans` */
 
 CREATE TABLE `kegiatans` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -108,19 +120,16 @@ CREATE TABLE `kegiatans` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `kegiatans` */
 
 insert  into `kegiatans`(`id`,`nama_kegiatan`,`tanggal_kegiatan`,`deskripsi`,`kuota_peserta`,`banner`,`created_at`,`updated_at`) values 
-(1,'Sembako Murah',NULL,'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum',5000,'banners/iMD8RxygsRYnRrwXkaLreMQ7jau2lAgYM0VUuSgX.jpg','2025-10-28 14:10:31','2025-10-28 14:10:31'),
-(2,'sembako mahal',NULL,'asdasdasd asdasd',1000,'banners/hW7SipkJtSryoxU03tbfSRkyx1wXKCoJWmesusp3.jpg','2025-10-28 14:18:18','2025-10-28 14:58:26'),
-(3,'asdasd',NULL,'asdasd',12,'banners/7I4NzczPWdo28JWRJAgVtGCtuHNyHW5Bhe3iv3Or.jpg','2025-10-28 14:20:34','2025-10-28 14:20:34'),
-(5,'wwwww',NULL,'asdasdads asdasdasd',111,'banners/zcDPnqlWFfreuUiEu1uGGIFKovZqGNN5WsMM5fpK.png','2025-10-28 15:12:29','2025-10-28 15:12:29');
+(6,'tebus murah',NULL,'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',1000,'banners/zTWpkAPKiglC7f6eFol91d5jWEvr6wEVEKUCamGa.jpg','2025-10-30 02:41:04','2025-10-30 02:41:04'),
+(7,'Lorem Ipsum',NULL,'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum',500,'banners/ckWqPwW6VPOS7OYryapDuRa75x7HONgMLmH8WPUA.jpg','2025-10-30 03:38:19','2025-10-30 03:38:19'),
+(8,'Lorem ipsum',NULL,'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum',5000,'banners/dB15vOe4W9YRHxpgjbAb19WIEblz2tcjTHo475k3.jpg','2025-10-30 03:38:54','2025-10-30 03:38:54');
 
 /*Table structure for table `migrations` */
-
-DROP TABLE IF EXISTS `migrations`;
 
 CREATE TABLE `migrations` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -140,8 +149,6 @@ insert  into `migrations`(`id`,`migration`,`batch`) values
 
 /*Table structure for table `model_has_permissions` */
 
-DROP TABLE IF EXISTS `model_has_permissions`;
-
 CREATE TABLE `model_has_permissions` (
   `permission_id` bigint(20) unsigned NOT NULL,
   `model_type` varchar(255) NOT NULL,
@@ -154,8 +161,6 @@ CREATE TABLE `model_has_permissions` (
 /*Data for the table `model_has_permissions` */
 
 /*Table structure for table `model_has_roles` */
-
-DROP TABLE IF EXISTS `model_has_roles`;
 
 CREATE TABLE `model_has_roles` (
   `role_id` bigint(20) unsigned NOT NULL,
@@ -174,8 +179,6 @@ insert  into `model_has_roles`(`role_id`,`model_type`,`model_id`) values
 
 /*Table structure for table `password_reset_tokens` */
 
-DROP TABLE IF EXISTS `password_reset_tokens`;
-
 CREATE TABLE `password_reset_tokens` (
   `email` varchar(255) NOT NULL,
   `token` varchar(255) NOT NULL,
@@ -185,9 +188,34 @@ CREATE TABLE `password_reset_tokens` (
 
 /*Data for the table `password_reset_tokens` */
 
-/*Table structure for table `permissions` */
+/*Table structure for table `pendaftarans` */
 
-DROP TABLE IF EXISTS `permissions`;
+CREATE TABLE `pendaftarans` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `kk` varchar(16) NOT NULL,
+  `ktp` varchar(16) NOT NULL,
+  `nama` varchar(100) NOT NULL,
+  `whatsapp` varchar(16) NOT NULL,
+  `berkas` varchar(225) DEFAULT NULL,
+  `kecamatan_id` bigint(20) NOT NULL,
+  `kegiatan_id` bigint(20) unsigned NOT NULL,
+  `antrian` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `kecamatan_id` (`kecamatan_id`),
+  KEY `kegiatan_id` (`kegiatan_id`),
+  CONSTRAINT `pendaftarans_ibfk_1` FOREIGN KEY (`kecamatan_id`) REFERENCES `kecamatans` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `pendaftarans_ibfk_2` FOREIGN KEY (`kegiatan_id`) REFERENCES `kegiatans` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `pendaftarans` */
+
+insert  into `pendaftarans`(`id`,`kk`,`ktp`,`nama`,`whatsapp`,`berkas`,`kecamatan_id`,`kegiatan_id`,`antrian`) values 
+(2,'2171031903920003','2171031903920003','ARCAKENCANA','082288954728','berkas/gTyFXqGfWal6PKJk9MbXkVdz2YakEvUweFkdREud.png',4,8,NULL),
+(3,'1231231231231231','1231231231231231','ARCAKENCANA','123123123123','berkas/Wcg94mN75cMkc8HRjGTOqjCj2mYzZ9oepkRBIjTw.png',4,8,NULL),
+(4,'1231231231231231','1231231231231231','ARCAKENCANA','123123123123','berkas/2e7B9p0dajA6SNLfNlWYQi3ayJpbB7YpoSrEshl5.png',9,8,NULL),
+(5,'1231231231231231','1231231231231231','ARCAKENCANA','123123123123','berkas/dOFOQMxbiXEO8zXy1h6gneHWvbB4GaybLqHwbEGZ.jpg',8,8,NULL);
+
+/*Table structure for table `permissions` */
 
 CREATE TABLE `permissions` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -209,8 +237,6 @@ insert  into `permissions`(`id`,`name`,`guard_name`,`created_at`,`updated_at`) v
 
 /*Table structure for table `role_has_permissions` */
 
-DROP TABLE IF EXISTS `role_has_permissions`;
-
 CREATE TABLE `role_has_permissions` (
   `permission_id` bigint(20) unsigned NOT NULL,
   `role_id` bigint(20) unsigned NOT NULL,
@@ -231,8 +257,6 @@ insert  into `role_has_permissions`(`permission_id`,`role_id`) values
 
 /*Table structure for table `roles` */
 
-DROP TABLE IF EXISTS `roles`;
-
 CREATE TABLE `roles` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -251,8 +275,6 @@ insert  into `roles`(`id`,`name`,`guard_name`,`created_at`,`updated_at`) values
 
 /*Table structure for table `sessions` */
 
-DROP TABLE IF EXISTS `sessions`;
-
 CREATE TABLE `sessions` (
   `id` varchar(255) NOT NULL,
   `user_id` bigint(20) unsigned DEFAULT NULL,
@@ -268,11 +290,9 @@ CREATE TABLE `sessions` (
 /*Data for the table `sessions` */
 
 insert  into `sessions`(`id`,`user_id`,`ip_address`,`user_agent`,`payload`,`last_activity`) values 
-('nvOqac3tJpUWiPiLVwuShaUD1YVysL1QyPZrskpS',1,'::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36','YTo0OntzOjY6Il90b2tlbiI7czo0MDoiTHZSS2N4RjBpMTVZemhFNG9RYnQ1dkhiZzJUNGlOVW5nWHZvS1A1diI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDc6Imh0dHA6Ly9sb2NhbGhvc3Qvc2l0ZWJ1cy1tdXJhaC9wdWJsaWMvZGFzaGJvYXJkIjtzOjU6InJvdXRlIjtzOjk6ImRhc2hib2FyZCI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==',1761664741);
+('cQ8EJ6retpWxDw9R93ARTHEk5uboisU56TEwGuCT',NULL,'::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36','YTozOntzOjY6Il90b2tlbiI7czo0MDoiUGFpejdBNnhHUnZoQjRJcUZWcW9tSVZRU1ZaQ2VrVzhzeU1aZmpuTSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjUwOiJodHRwOi8vbG9jYWxob3N0L3NpdGVidXMtbXVyYWgvcHVibGljL3BlbmRhZnRhcmFuL2V5SnBkaUk2SWpsQmJXeDNNbk5vY0dscE5YSmFSSEU1ZG5sUU5WRTlQU0lzSW5aaGJIVmxJam9pYVdRd2NrWlROamh6VmpsUFNrY3dXRGxSZDAxbVVUMDlJaXdpYldGaklqb2lNbVZoTURNNU9HRTBNR1V6WVdZME16QTBZemRpTW1KbE9UYzFPVFk1TkdKbE1XRTBZMll6WXprek1ERTBNekV4T0RKbE1HWmtNbVF6T1RBd09UTXhaU0lzSW5SaFp5STZJaUo5IjtzOjU6InJvdXRlIjtzOjE4OiJwZW5kYWZ0YXJhbi5jcmVhdGUiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19',1761901190);
 
 /*Table structure for table `users` */
-
-DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE `users` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
