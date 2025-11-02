@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kegiatan;
+use App\Models\Kecamatan;
+use App\Models\Kuota;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -54,7 +56,19 @@ class KegiatanController extends Controller
             $data['banner'] = $request->file('banner')->store('banners', 'public');
         }
 
-        Kegiatan::create($data);
+        $kegiatan = Kegiatan::create($data);
+
+        $kecamatan = Kecamatan::get();
+
+        foreach ($kecamatan as $value) {
+
+            Kuota::create([
+                'kegiatan_id'   => $kegiatan->id,
+                'kecamatan_id'  => $value->id,
+                'jumlah'        => 0,
+            ]);
+            
+        }
 
         return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil ditambahkan!');
     }
@@ -65,7 +79,7 @@ class KegiatanController extends Controller
 
     //     $data['acara'] = Acara::with('ruangan')->where('id', $id)->first();
     //     $data['title'] = $data['acara']->nama_acara; 
-        
+
     //     return view('acara.show', $data);
     // }
 
@@ -105,6 +119,23 @@ class KegiatanController extends Controller
         $kegiatan->delete();
 
         return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil dihapus!');
+    }
+
+    public function kuota($id)
+    {
+        $id = Crypt::decrypt($id);
+
+        $kegiatan = Kegiatan::select('nama_kegiatan', 'kuota_peserta')
+        ->where('id', $id)
+        ->first();
+
+        $kuota = Kuota::select('kuotas.id', 'name', 'jumlah')
+        ->join('kegiatans', 'kuotas.kegiatan_id', '=', 'kegiatans.id')
+        ->join('kecamatans', 'kuotas.kecamatan_id', '=', 'kecamatans.id')
+        ->where('kegiatan_id', $id)
+        ->get();
+
+        return view('kegiatan.kuota', compact('kegiatan', 'kuota'));
     }
 
     public function exportPdf($id)

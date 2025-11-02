@@ -52,7 +52,7 @@ function applyUppercaseRestriction(selector = '.only-uppercase', maxLength = nul
 	inputs.forEach(input => {
 		input.addEventListener('input', function () {
         // Hanya izinkan huruf (A-Z/a-z)
-			let val = this.value.replace(/[^a-zA-Z]/g, '');
+			let val = this.value.replace(/[^a-zA-Z\s]/g, '');
         // Ubah ke huruf kapital semua
 			val = val.toUpperCase();
         // Batasi panjang jika diatur
