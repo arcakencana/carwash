@@ -6,6 +6,10 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 
 Route::get('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::class, 'create'])->name('pendaftaran.create');
 Route::post('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::class, 'store'])->name('pendaftaran.store');
+Route::get('/get-kuota/{kegiatan_id}/{kecamatan_id}', [App\Http\Controllers\PendaftaranController::class, 'getKuota'])
+->name('getKuota');
+
+
 
 Route::get('/register', function () {
     return redirect('/login');
@@ -25,6 +29,7 @@ Route::group(['middleware' => ['auth','role:admin']], function () {
     Route::resource('kegiatan', App\Http\Controllers\KegiatanController::class);
     Route::get('/kegiatan/pdf/{id}', [App\Http\Controllers\KegiatanController::class, 'exportPdf'])->name('kegiatan.pdf');
     Route::get('/kegiatan/kuota/{id}', [App\Http\Controllers\KegiatanController::class, 'kuota'])->name('kegiatan.kuota');
+    Route::put('/kegiatan/kuota/update-massal', [App\Http\Controllers\KegiatanController::class, 'kuotaUpdateMassal'])->name('kuota.updateMassal');
 });
 
 Route::group(['middleware' => ['auth','role:user']], function () {

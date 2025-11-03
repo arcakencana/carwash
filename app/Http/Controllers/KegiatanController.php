@@ -138,6 +138,18 @@ class KegiatanController extends Controller
         return view('kegiatan.kuota', compact('kegiatan', 'kuota'));
     }
 
+    public function kuotaUpdateMassal(Request $request)
+    {
+        $data = $request->input('jumlah');
+
+        foreach ($data as $id => $jumlah) {
+            Kuota::where('id', $id)->update(['jumlah' => $jumlah]);
+        }
+
+        return redirect()->back()->with('success', 'Kuota berhasil diperbarui!');
+    }
+
+
     public function exportPdf($id)
     {
         $id = Crypt::decrypt($id);

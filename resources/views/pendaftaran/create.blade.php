@@ -14,8 +14,8 @@
             <!-- Kartu utama -->
             <div class="w-full sm:max-w-xl mt-5 mb-8 px-4 py-6 bg-white bg-opacity-80 shadow-lg overflow-hidden sm:rounded-lg backdrop-blur-sm">
 
-               <!-- Header -->
-               <div class="flex flex-col items-center mb-4">
+             <!-- Header -->
+             <div class="flex flex-col items-center mb-4">
                 <div class="flex items-center space-x-3 mt-4">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 w-auto">
                     <span class="text-3xl font-bold text-gray-800 dark:text-gray-900">SITEBUS MURAH</span>
@@ -40,8 +40,8 @@
                 <p class="text-gray-600 text-sm mb-4 text-justify">
                     {{ $kegiatan->deskripsi }}
                 </p>
-                <p class="text-gray-500 text-sm"><strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($kegiatan->tanggal_kegiatan)->format('d M Y, H:i') }}</p>
-                <p class="text-gray-500 text-sm"><strong>Kuota:</strong> {{ $kegiatan->kuota_peserta }}</p>
+                <p class="text-gray-500 text-sm"><strong>Tanggal :</strong> {{ \Carbon\Carbon::parse($kegiatan->tanggal_kegiatan)->format('d M Y, H:i') }}</p>
+                <p class="text-gray-500 text-sm"><strong>Total Kuota :</strong> {{ number_format($kegiatan->kuota_peserta) }}</p>
             </div>
 
             <hr class="my-6">
@@ -51,7 +51,7 @@
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">Formulir Pendaftaran</h2>
 
                 <form id="form">
-                    <input type="hidden" name="kegiatan_id" value="{{ $kegiatan->id }}">
+                    <input type="hidden" name="kegiatan_id" id="kegiatan_id" value="{{ $kegiatan->id }}">
 
                     <!-- Input fields -->
                     <div class="space-y-4">
@@ -82,11 +82,13 @@
 
                         <div>
                             <label class="block font-semibold mb-1">Pilih Kecamatan</label>
-                            <select name="kecamatan_id" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                            <select name="kecamatan_id" id="kecamatan_id" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                                <option value="">-- Pilih Kecamatan --</option>
                                 @foreach($kecamatan as $value)
                                 <option value="{{ $value->id }}">{{ $value->name }}</option>
                                 @endforeach
                             </select>
+                            <div id="kuota-info" class="mt-2 text-sm text-gray-700"></div>
                         </div>
 
                         <div>
@@ -136,7 +138,6 @@
 </div>
 </div>
 
-!-- Modal -->
 <div id="termsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-lg max-w-lg w-full p-6 relative">
         <h3 class="text-lg font-semibold mb-3">Syarat & Ketentuan</h3>
@@ -162,7 +163,7 @@
             e.preventDefault();
 
             if (!$('#terms').is(':checked')) {
-                $('#result').html('<div class="alert alert-warning">Silakan centang "Syarat & Ketentuan" terlebih dahulu!</div>');
+                $('#result').html('<div class="p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50" role="alert"><svg class="inline w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-8 3a1 1 0 001-1V9a1 1 0 10-2 0v3a1 1 0 001 1zm0 2a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" clip-rule="evenodd"></path></svg><span class="font-semibold">Gagal!</span> Silakan centang "Syarat & Ketentuan" terlebih dahulu!</div>');
                 return;
             }
 
@@ -232,10 +233,10 @@
                     }
                 },
                 error: function(err) {
-                    $('#result').html('<div class="alert alert-danger">Terjadi kesalahan!</div>');
+                    $('#result').html('<div class="p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50" role="alert"><svg class="inline w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-8 3a1 1 0 001-1V9a1 1 0 10-2 0v3a1 1 0 001 1zm0 2a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" clip-rule="evenodd"></path></svg><span class="font-semibold">Gagal!</span> Terjadi kesalahan!</div>');
                 }
             });
-        });
+});
 });
 </script>
 
@@ -264,6 +265,45 @@
         termsModal.classList.add('hidden');
     }
 });
+
+    // === Menampilkan jumlah & sisa kuota berdasarkan kecamatan & kegiatan ===
+    $(document).on('change', '#kecamatan_id', function() {
+        let kecamatan_id = $(this).val();
+        let kegiatan_id = $('#kegiatan_id').val();
+
+        if (!kecamatan_id) {
+            $('#kuota-info').html('');
+            return;
+        }
+
+        $('#kuota-info').html('<span class="text-gray-500">Memuat data kuota...</span>');
+
+        let url = "{{ url('/get-kuota') }}/" + kegiatan_id + "/" + kecamatan_id;
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(res) {
+                if (res.success) {
+                    const jumlahFormatted = Number(res.jumlah).toLocaleString('id-ID');
+                    const sisaFormatted = Number(res.sisa).toLocaleString('id-ID');
+                    let color = res.sisa > 0 ? 'text-green-700' : 'text-red-700';
+                    $('#kuota-info').html(`
+                    <div class="p-2 border rounded bg-gray-50 mt-2">
+                        <p><strong>Jumlah Kuota:</strong> ${jumlahFormatted}</p>
+                        <p class="${color}"><strong>Sisa Kuota:</strong> ${sisaFormatted}</p>
+                    </div>
+                    `);
+                } else {
+                    $('#kuota-info').html(`<span class="text-red-600">${res.message}</span>`);
+                }
+            },
+            error: function() {
+                $('#kuota-info').html('<span class="text-red-600">Gagal memuat data kuota!</span>');
+            }
+        });
+    });
+
 </script>
 @endpush
 

@@ -46,11 +46,11 @@
                                 </p>
 
                                 <p class="text-gray-500 text-sm mb-1">
-                                    <strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($kegiatans->tanggal_kegiatan)->format('d M Y, H:i') }}
+                                    <strong>Tanggal :</strong> {{ \Carbon\Carbon::parse($kegiatans->tanggal_kegiatan)->format('d M Y, H:i') }}
                                 </p>
 
                                 <p class="text-gray-500 text-sm mb-3">
-                                    <strong>Kuota:</strong> {{ number_format($kegiatans->kuota_peserta) }}
+                                    <strong>Total Kuota :</strong> {{ number_format($kegiatans->kuota_peserta) }}
                                 </p>
                             </div>
 

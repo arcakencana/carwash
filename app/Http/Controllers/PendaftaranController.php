@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Kegiatan;
 use App\Models\Kecamatan;
 use App\Models\Pendaftaran;
+use App\Models\Kuota;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -100,6 +101,33 @@ class PendaftaranController extends Controller
 
         } 
 
+    }
+
+    public function getKuota($kegiatan_id, $kecamatan_id)
+    {
+        $kuota = Kuota::where('kegiatan_id', $kegiatan_id)
+        ->where('kecamatan_id', $kecamatan_id)
+        ->first();
+
+        if (!$kuota) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data kuota tidak ditemukan'
+            ]);
+        }
+
+        // Hitung jumlah pendaftar pada kegiatan dan kecamatan yang sama
+        $jumlah_pendaftar = Pendaftaran::where('kegiatan_id', $kegiatan_id)
+        ->where('kecamatan_id', $kecamatan_id)
+        ->count();
+
+        $sisa = $kuota->jumlah - $jumlah_pendaftar;
+
+        return response()->json([
+            'success' => true,
+            'jumlah' => $kuota->jumlah,
+            'sisa' => max($sisa, 0),
+        ]);
     }
 
     public function edit(Kegiatan $kegiatan)
