@@ -12,7 +12,7 @@
         <div class="relative min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-2">
 
             <!-- Card utama (lebar diperbesar) -->
-            <div class="w-full sm:max-w-xl mt-5 mb-8 px-4 py-6 bg-white bg-opacity-80 shadow-lg overflow-hidden sm:rounded-lg backdrop-blur-sm">
+            <div class="w-full sm:max-w-xl lg:max-w-2xl mt-5 mb-8 px-4 py-6 bg-white bg-opacity-80 shadow-lg overflow-hidden sm:rounded-lg backdrop-blur-sm">
 
                 <!-- Header -->
                 <div class="flex flex-col items-center">
@@ -37,11 +37,11 @@
                             @endif
 
                             <div class="p-4">
-                                <h2 class="text-xl font-semibold text-gray-800 mb-2 dark:text-gray-900">
+                                <h2 class="text-2xl font-semibold text-gray-800 mb-2 dark:text-gray-900">
                                     {{ $kegiatans->nama_kegiatan }}
                                 </h2>
 
-                                <p class="text-gray-600 dark:text-gray-800 text-sm mb-3 text-justify">
+                                <p class="text-gray-600 dark:text-gray-800 text-md mb-3 text-justify">
                                     {{ $kegiatans->deskripsi }}
                                 </p>
 
@@ -68,10 +68,15 @@
                                 </div>
                             </div>
 
+                            <div class="flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+                                <div class="mb-6 text-center">
+                                    <a href="{{ url('/pendaftaran', encrypt($kegiatans->id)) }}" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition-all duration-200 ease-in-out p-4" target="_blank">Link Pendaftaran</a>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

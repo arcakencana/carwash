@@ -38,12 +38,13 @@ class PendaftaranController extends Controller
         $id = decrypt($id);
 
         $request->validate([
+            'kecamatan_id' => 'required|integer',
+            'kelurahan_id' => 'required|integer',
             'kk' => 'required|integer',
             'ktp' => 'required|integer',
             'nama' => 'required',
-            'whatsapp' => 'required|min:9',
             'alamat' => 'required',
-            'kecamatan_id' => 'required|integer',
+            'whatsapp' => 'required|min:9',
             // 'foto_kk' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -75,7 +76,7 @@ class PendaftaranController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data sudah pernah disimpan!',
+                'message' => 'Mohon Maaf Registrasi Anda Gagal Karena Data Nomor KK, NIK atau Whatsapp Anda Sudah Melakukan Pendaftaran',
                 'data' => null
             ]);
 
@@ -87,9 +88,10 @@ class PendaftaranController extends Controller
                 'nama' => $request->nama,
                 'whatsapp' => $request->whatsapp,
                 'alamat' => $request->alamat,
-                'lansia_disabilitas' => $request->is_lansia,
+                'lansia_disabilitas' => 'Tidak',
                 // 'berkas' => $path,
                 'kecamatan_id' => $request->kecamatan_id,
+                'kelurahan_id' => $request->kelurahan_id,
                 'kegiatan_id' => $id,
             ]);
 

@@ -8,8 +8,7 @@ Route::get('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::cla
 Route::post('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::class, 'store'])->name('pendaftaran.store');
 Route::get('/get-kuota/{kegiatan_id}/{kecamatan_id}', [App\Http\Controllers\PendaftaranController::class, 'getKuota'])
 ->name('getKuota');
-
-
+Route::get('/get-kelurahan/{kecamatan_id}', [App\Http\Controllers\WilayahController::class, 'getKelurahan']);
 
 Route::get('/register', function () {
     return redirect('/login');

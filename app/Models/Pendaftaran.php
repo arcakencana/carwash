@@ -17,6 +17,7 @@ class Pendaftaran extends Model
         'alamat',
         'lansia_disabilitas',
         'kecamatan_id',
+        'kelurahan_id',
         'kegiatan_id',
         'antrian',
     ];
