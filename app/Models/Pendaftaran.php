@@ -21,5 +21,5 @@ class Pendaftaran extends Model
         'kegiatan_id',
         'antrian',
     ];
-    public $timestamps = false;
+
 }

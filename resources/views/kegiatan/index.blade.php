@@ -62,7 +62,9 @@
                                     @endif
                                 </td>
                                 <td class="py-2 px-4 text-center">
-                                    <a href="{{ route('kegiatan.pdf', encrypt($kegiatan->id)) }}" class="text-blue-600 hover:underline" target="_blank">pdf</a>
+                                    <a href="{{ route('pendaftaran-khusus.create', encrypt($kegiatan->id)) }}" class="text-blue-600 hover:underline" target="_blank">Khusus</a>
+                                    <span class="text-gray-400">|</span>
+                                    <a href="{{ route('kegiatan.pdf', encrypt($kegiatan->id)) }}" class="text-blue-600 hover:underline" target="_blank">PDF</a>
                                     <span class="text-gray-400">|</span>
                                     <a href="{{ route('kegiatan.kuota', encrypt($kegiatan->id)) }}" class="text-blue-600 hover:underline">Kuota</a>
                                     <span class="text-gray-400">|</span>

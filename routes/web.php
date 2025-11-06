@@ -23,12 +23,16 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::group(['middleware' => ['auth','role:admin']], function () {
+
     // User CRUD hanya untuk admin
     Route::resource('users', App\Http\Controllers\UserController::class);
     Route::resource('kegiatan', App\Http\Controllers\KegiatanController::class);
     Route::get('/kegiatan/pdf/{id}', [App\Http\Controllers\KegiatanController::class, 'exportPdf'])->name('kegiatan.pdf');
     Route::get('/kegiatan/kuota/{id}', [App\Http\Controllers\KegiatanController::class, 'kuota'])->name('kegiatan.kuota');
     Route::put('/kegiatan/kuota/update-massal', [App\Http\Controllers\KegiatanController::class, 'kuotaUpdateMassal'])->name('kuota.updateMassal');
+
+    Route::get('/pendaftaran-khusus/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'create'])->name('pendaftaran-khusus.create');
+    Route::post('/pendaftaran-khusus/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'store'])->name('pendaftaran-khusus.store');
 });
 
 Route::group(['middleware' => ['auth','role:user']], function () {

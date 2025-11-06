@@ -48,12 +48,10 @@
 
             <!-- Form -->
             <div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">Formulir Pendaftaran</h2>
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Formulir Pendaftaran Lansia / Disabilitas</h2>
 
                 <form id="form">
                     <input type="hidden" name="kegiatan_id" id="kegiatan_id" value="{{ $kegiatan->id }}">
-
-
 
                     <div class="space-y-4">
                         <div>
@@ -206,7 +204,7 @@
             let formData = new FormData(this);
 
             $.ajax({
-                url: "{{ route('pendaftaran.store', encrypt($kegiatan->id)) }}",
+                url: "{{ route('pendaftaran-khusus.store', encrypt($kegiatan->id)) }}",
                 method: "POST",
                 data: formData,
                 processData: false,

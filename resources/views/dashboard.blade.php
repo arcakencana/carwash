@@ -8,6 +8,8 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
+            <h2 class="text-2xl font-bold mb-4 text-gray-700">Monitoring, {{ $kegiatans->nama_kegiatan }}</h2>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
 
                 <div class="bg-white shadow rounded-lg p-5 border-l-4 border-green-500 hover:shadow-md transition flex items-center">
@@ -18,7 +20,7 @@
                     </div>
                     <div>
                         <h2 class="text-sm font-semibold text-gray-500 uppercase">Total Kuota</h2>
-                        <p class="text-2xl font-bold text-gray-800 mt-1">{{ $totalKuota }}</p>
+                        <p class="text-2xl font-bold text-gray-800 mt-1">{{ number_format($kegiatans->kuota_peserta) }}</p>
                     </div>
                 </div>
 
@@ -29,8 +31,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h2 class="text-sm font-semibold text-gray-500 uppercase">Jumlah Pendaftaran</h2>
-                        <p class="text-2xl font-bold text-gray-800 mt-1">{{ $jumlahPendaftaran }}</p>
+                        <h2 class="text-sm font-semibold text-gray-500 uppercase">Total Pendaftaran</h2>
+                        <p class="text-2xl font-bold text-gray-800 mt-1">{{ number_format($totalPendaftaran) }}</p>
                     </div>
                 </div>
 
@@ -42,7 +44,7 @@
                     </div>
                     <div>
                         <h2 class="text-sm font-semibold text-gray-500 uppercase">Sisa Kuota</h2>
-                        <p class="text-2xl font-bold text-gray-800 mt-1">{{ $sisaKuota }}</p>
+                        <p class="text-2xl font-bold text-gray-800 mt-1">{{ number_format($sisaKuota) }}</p>
                     </div>
                 </div>
 

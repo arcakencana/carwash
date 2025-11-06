@@ -2,26 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use App\Models\Kegiatan;
 use App\Models\Kecamatan;
 use App\Models\Pendaftaran;
 use App\Models\Kuota;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Crypt;
 
-class PendaftaranController extends Controller
+class PendaftaranKhususController extends Controller
 {
-    public function __construct()
-    {
-        //
-    }
-
-    public function index(Request $request)
-    {
-        //
-    }
 
     public function create($id)
     {
@@ -30,7 +19,7 @@ class PendaftaranController extends Controller
         $data['kegiatan'] = Kegiatan::where('id', $id)->first();
         $data['kecamatan'] = Kecamatan::get();
         
-        return view('pendaftaran.create', $data);
+        return view('pendaftaran-khusus.create', $data);
     }
 
     public function store(Request $request, $id)
@@ -45,12 +34,7 @@ class PendaftaranController extends Controller
             'nama' => 'required',
             'alamat' => 'required',
             'whatsapp' => 'required|min:9',
-            // 'foto_kk' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
-
-        // if ($request->hasFile('foto_kk')) {
-        //     $path = $request->file('foto_kk')->store('berkas', 'public');
-        // }
 
         $kk = $request->kk;
         $ktp = $request->ktp;
@@ -107,8 +91,7 @@ class PendaftaranController extends Controller
                 'nama' => $request->nama,
                 'whatsapp' => $request->whatsapp,
                 'alamat' => $request->alamat,
-                'lansia_disabilitas' => 'tidak',
-                // 'berkas' => $path,
+                'lansia_disabilitas' => 'ya',
                 'kecamatan_id' => $request->kecamatan_id,
                 'kelurahan_id' => $request->kelurahan_id,
                 'kegiatan_id' => $id,
@@ -122,48 +105,6 @@ class PendaftaranController extends Controller
 
         } 
 
-    }
-
-    public function getKuota($kegiatan_id, $kecamatan_id)
-    {
-        $kuota = Kuota::where('kegiatan_id', $kegiatan_id)
-        ->where('kecamatan_id', $kecamatan_id)
-        ->first();
-
-        if (!$kuota) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data kuota tidak ditemukan'
-            ]);
-        }
-
-        // Hitung jumlah pendaftar pada kegiatan dan kecamatan yang sama
-        $jumlah_pendaftar = Pendaftaran::where('kegiatan_id', $kegiatan_id)
-        ->where('kecamatan_id', $kecamatan_id)
-        ->count();
-
-        $sisa = $kuota->jumlah - $jumlah_pendaftar;
-
-        return response()->json([
-            'success' => true,
-            'jumlah' => $kuota->jumlah,
-            'sisa' => max($sisa, 0),
-        ]);
-    }
-
-    public function edit(Kegiatan $kegiatan)
-    {
-        //
-    }
-
-    public function update(Request $request, Kegiatan $kegiatan)
-    {
-        //
-    }
-
-    public function destroy(Kegiatan $kegiatan)
-    {
-        //
     }
 
 }
