@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kelurahan;
-use Illuminate\Http\Request;
 
 class WilayahController extends Controller
 {

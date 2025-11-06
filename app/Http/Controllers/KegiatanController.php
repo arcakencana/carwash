@@ -67,7 +67,7 @@ class KegiatanController extends Controller
                 'kecamatan_id'  => $value->id,
                 'jumlah'        => 0,
             ]);
-            
+
         }
 
         return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil ditambahkan!');
@@ -78,7 +78,7 @@ class KegiatanController extends Controller
     //     $id = decrypt($id);
 
     //     $data['acara'] = Acara::with('ruangan')->where('id', $id)->first();
-    //     $data['title'] = $data['acara']->nama_acara; 
+    //     $data['title'] = $data['acara']->nama_acara;
 
     //     return view('acara.show', $data);
     // }

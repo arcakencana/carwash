@@ -42,4 +42,3 @@ Route::group(['middleware' => ['auth','role:user']], function () {
 });
 
 require __DIR__.'/auth.php';
-

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Kegiatan;
 use App\Models\Pendaftaran;
 
@@ -31,10 +30,10 @@ class DashboardController extends Controller
         ->orderBy('tanggal')
         ->get();
 
-        $tanggalHarian = $data->map(fn($d) => \Carbon\Carbon::parse($d->tanggal)->format('d M'));
+        $tanggalHarian = $data->map(fn ($d) => \Carbon\Carbon::parse($d->tanggal)->format('d M'));
         $jumlahHarian  = $data->pluck('total');
 
-        return view('dashboard', compact('kegiatans','totalPendaftaran','sisaKuota','persentase','tanggalHarian','jumlahHarian'));
+        return view('dashboard', compact('kegiatans', 'totalPendaftaran', 'sisaKuota', 'persentase', 'tanggalHarian', 'jumlahHarian'));
     }
 
 }

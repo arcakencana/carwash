@@ -7,9 +7,7 @@ use App\Models\Kecamatan;
 use App\Models\Pendaftaran;
 use App\Models\Kuota;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Crypt;
+use App\Helpers\WhatsappHelper;
 
 class PendaftaranController extends Controller
 {
@@ -29,7 +27,7 @@ class PendaftaranController extends Controller
 
         $data['kegiatan'] = Kegiatan::where('id', $id)->first();
         $data['kecamatan'] = Kecamatan::get();
-        
+
         return view('pendaftaran.create', $data);
     }
 
@@ -114,13 +112,20 @@ class PendaftaranController extends Controller
                 'kegiatan_id' => $id,
             ]);
 
+            WhatsappHelper::notifikasi(
+                $request->whatsapp,
+                $request->nama,
+                '01',
+                'https://example.com/verifikasi/A-102'
+            );
+
             return response()->json([
                 'success' => true,
                 'message' => 'Data berhasil disimpan, silahkan menunggu notifikasi undangan pengambilan paket subsidi melalui nomor whatsapp yang telah anda daftarkan',
                 'data' => $data
             ]);
 
-        } 
+        }
 
     }
 

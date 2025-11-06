@@ -3,22 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use App\Models\Kegiatan;
 use App\Models\Kecamatan;
 use App\Models\Pendaftaran;
-use App\Models\Kuota;
 
 class PendaftaranKhususController extends Controller
 {
-
     public function create($id)
     {
         $id = decrypt($id);
 
         $data['kegiatan'] = Kegiatan::where('id', $id)->first();
         $data['kecamatan'] = Kecamatan::get();
-        
+
         return view('pendaftaran-khusus.create', $data);
     }
 
@@ -103,7 +100,7 @@ class PendaftaranKhususController extends Controller
                 'data' => $data
             ]);
 
-        } 
+        }
 
     }
 
