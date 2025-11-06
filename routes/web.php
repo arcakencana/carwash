@@ -14,7 +14,9 @@ Route::get('/register', function () {
     return redirect('/login');
 });
 
-Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
+->middleware(['auth'])
+->name('dashboard');
 
 // profile
 Route::middleware('auth')->group(function () {
