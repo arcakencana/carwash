@@ -1,9 +1,11 @@
 *.log
 .DS_Store
 .env
-.env.backup
+.env.testing
 .env.production
 .phpactor.json
+.php-cs-fixer.cache
+.php-cs-fixer.php
 .phpunit.result.cache
 /.fleet
 /.idea
