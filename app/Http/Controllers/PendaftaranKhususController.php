@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Helpers\WhatsappHelper;
 use App\Models\Kegiatan;
 use App\Models\Kecamatan;
 use App\Models\Pendaftaran;
@@ -82,6 +83,8 @@ class PendaftaranKhususController extends Controller
 
         } else {
 
+            $nextNomorUrut = Pendaftaran::getNextNomorUrut($request->kecamatan_id);
+
             $data = Pendaftaran::create([
                 'kk' => $request->kk,
                 'ktp' => $request->ktp,
@@ -89,15 +92,25 @@ class PendaftaranKhususController extends Controller
                 'whatsapp' => $request->whatsapp,
                 'alamat' => $request->alamat,
                 'lansia_disabilitas' => 'ya',
+                'antrian' => $nextNomorUrut,
                 'kecamatan_id' => $request->kecamatan_id,
                 'kelurahan_id' => $request->kelurahan_id,
                 'kegiatan_id' => $id,
             ]);
 
+            $nama       = $request->nama;
+            $noAntrian  = $nextNomorUrut;
+            $phone      = '62' . substr($request->whatsapp, 1);
+            $link       = route('pendaftaran.download', encrypt($data->id));
+
+            $message = "*Halo $nama,* Pendaftaran kamu berhasil ✅ Nomor Antrian: *$noAntrian* \nSilakan download bukti pendaftaran melalui link berikut: \n $link";
+
+            WhatsappHelper::sendMessage($phone, $message);
+
             return response()->json([
                 'success' => true,
-                'message' => 'Data berhasil disimpan, silahkan menunggu notifikasi undangan pengambilan paket subsidi melalui nomor whatsapp yang telah anda daftarkan',
-                'data' => $data
+                'message' => 'Data berhasil disimpan, silahkan menunggu notifikasi undangan pengambilan paket subsidi melalui nomor whatsapp yang telah anda daftarkan atau download bukti pendaftaran di bawah ini.',
+                'data' => route('pendaftaran.download', encrypt($data->id))
             ]);
 
         }

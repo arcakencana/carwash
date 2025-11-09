@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-900 leading-tight">
-            Daftar Kegiatan
+            {{ __('Daftar Kegiatan') }}
         </h2>
     </x-slot>
 
@@ -52,7 +52,7 @@
                                     {{ \Carbon\Carbon::parse($kegiatan->tanggal_kegiatan)->format('d M Y, H:i') }}
                                 </td>
                                 <td class="py-2 px-4 text-center text-gray-600">
-                                    {{ $kegiatan->kuota_peserta }}
+                                    {{ number_format($kegiatan->kuota_peserta) }}
                                 </td>
                                 <td class="py-2 px-4 text-center">
                                     @if ($kegiatan->banner)

@@ -77,10 +77,9 @@
     <!-- Kirim data ke JS -->
     <script>
         window.pendaftarHarian = {
-    labels: @json($tanggalHarian), // ['01 Nov', '02 Nov', ...]
-    data: @json($jumlahHarian)     // [12, 20, 15, ...]
-};
-</script>
+            labels: @json($tanggalHarian),
+            data: @json($jumlahHarian)
+        };
+    </script>
 
-@vite('resources/js/dashboardChart.js')
 </x-app-layout>

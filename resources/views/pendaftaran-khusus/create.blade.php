@@ -226,12 +226,26 @@
 
                         // Jika berhasil
                         const d = res.data;
+
                         $('#result').html(`
                             <div class="p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50">
                                 <span class="font-semibold">Berhasil!</span> ${res.message}
+
+                            <div class="mt-6 mb-6">
+                                <a href="${d}" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold p-2 rounded-lg transition-all duration-200 ease-in-out" target="_blank">Download Bukti Pendaftaran
+                                </a>
+                            </div>
+
                             </div>
                         `);
+
                         $('#form')[0].reset();
+
+                        // ✅ Scroll ke paling bawah
+                        $('html, body').animate({
+                            scrollTop: $(document).height()
+                        }, 500);
+                        
                     } else {
 
                         // Kalau validasi custom gagal
@@ -268,77 +282,77 @@
         });
 
         // === Menampilkan jumlah & sisa kuota berdasarkan kecamatan & kegiatan ===
-        $(document).on('change', '#kecamatan_id', function() {
+$(document).on('change', '#kecamatan_id', function() {
 
-            let kecamatan_id = $(this).val();
-            let kecamatan = $('#kecamatan_id option:selected').text();
-            let kegiatan_id = $('#kegiatan_id').val();
+    let kecamatan_id = $(this).val();
+    let kecamatan = $('#kecamatan_id option:selected').text();
+    let kegiatan_id = $('#kegiatan_id').val();
 
-            if (!kecamatan_id) {
-                $('#kuota-info').html('');
-                return;
-            }
+    if (!kecamatan_id) {
+        $('#kuota-info').html('');
+        return;
+    }
 
-            $('#kuota-info').html('<span class="text-gray-500">Memuat data kuota...</span>');
+    $('#kuota-info').html('<span class="text-gray-500">Memuat data kuota...</span>');
 
-            let url = "{{ url('/get-kuota') }}/" + kegiatan_id + "/" + kecamatan_id;
+    let url = "{{ url('/get-kuota') }}/" + kegiatan_id + "/" + kecamatan_id;
 
-            $.ajax({
-                url: url,
-                type: 'GET',
-                success: function(res) {
-                    if (res.success) {
-                        const jumlahFormatted = Number(res.jumlah).toLocaleString('id-ID');
-                        const sisaFormatted = Number(res.sisa).toLocaleString('id-ID');
-                        let color = res.sisa > 0 ? 'text-green-700' : 'text-red-700';
-                        $('#kuota-info').html(`
+    $.ajax({
+        url: url,
+        type: 'GET',
+        success: function(res) {
+            if (res.success) {
+                const jumlahFormatted = Number(res.jumlah).toLocaleString('id-ID');
+                const sisaFormatted = Number(res.sisa).toLocaleString('id-ID');
+                let color = res.sisa > 0 ? 'text-green-700' : 'text-red-700';
+                $('#kuota-info').html(`
                         <div class="p-2 border rounded bg-gray-50 mt-2">
                             <p class="${color}"><strong>Sisa Kuota ${kecamatan} ${sisaFormatted} dari ${jumlahFormatted}</strong></p>
                         </div>
-                        `);
-                    } else {
-                        $('#kuota-info').html(`<span class="text-red-600">${res.message}</span>`);
-                    }
-                },
-                error: function() {
-                    $('#kuota-info').html('<span class="text-red-600">Gagal memuat data kuota!</span>');
-                }
-            });
+                `);
+            } else {
+                $('#kuota-info').html(`<span class="text-red-600">${res.message}</span>`);
+            }
+        },
+        error: function() {
+            $('#kuota-info').html('<span class="text-red-600">Gagal memuat data kuota!</span>');
+        }
+    });
 
-        });
+});
 
         // === Menampilkan kelurahan berdasarkan kecamatan ===
-        $(document).on('change', '#kecamatan_id', function() {
+$(document).on('change', '#kecamatan_id', function() {
 
-            let kecamatan_id = $(this).val();
+    let kecamatan_id = $(this).val();
 
             // kosongkan dropdown kelurahan saat ganti kecamatan
-            $('#kelurahan_id').html('<option value="">-- Pilih Kelurahan --</option>');
+    $('#kelurahan_id').html('<option value="">-- Pilih Kelurahan --</option>');
 
-            if (!kecamatan_id) return;
+    if (!kecamatan_id) return;
 
-            $.ajax({
-                url: "{{ url('/get-kelurahan') }}/" + kecamatan_id,
-                type: "GET",
-                success: function(res) {
-                    if (res.success) {
-                        let options = '<option value="">-- Pilih Kelurahan --</option>';
-                        $.each(res.data, function(index, item) {
-                            options += `<option value="${item.id}">${item.name}</option>`;
-                        });
-                        $('#kelurahan_id').html(options);
-                    } else {
-                        $('#kelurahan_id').html('<option value="">Kelurahan tidak tersedia</option>');
-                    }
-                },
-                error: function() {
-                    $('#kelurahan_id').html('<option value="">Gagal memuat kelurahan</option>');
-                }
-            });
-
-        });
-
+    $.ajax({
+        url: "{{ url('/get-kelurahan') }}/" + kecamatan_id,
+        type: "GET",
+        success: function(res) {
+            if (res.success) {
+                let options = '<option value="">-- Pilih Kelurahan --</option>';
+                $.each(res.data, function(index, item) {
+                    options += `<option value="${item.id}">${item.name}</option>`;
+                });
+                $('#kelurahan_id').html(options);
+            } else {
+                $('#kelurahan_id').html('<option value="">Kelurahan tidak tersedia</option>');
+            }
+        },
+        error: function() {
+            $('#kelurahan_id').html('<option value="">Gagal memuat kelurahan</option>');
+        }
     });
+
+});
+
+});
 
 </script>
 @endpush

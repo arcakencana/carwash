@@ -6,6 +6,8 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 
 Route::get('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::class, 'create'])->name('pendaftaran.create');
 Route::post('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::class, 'store'])->name('pendaftaran.store');
+Route::get('/pendaftaran/download/{id}', [App\Http\Controllers\PendaftaranController::class, 'download'])->name('pendaftaran.download');
+
 Route::get('/get-kuota/{kegiatan_id}/{kecamatan_id}', [App\Http\Controllers\PendaftaranController::class, 'getKuota'])
 ->name('getKuota');
 Route::get('/get-kelurahan/{kecamatan_id}', [App\Http\Controllers\WilayahController::class, 'getKelurahan']);
