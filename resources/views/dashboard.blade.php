@@ -74,6 +74,8 @@
         </div>
     </div>
 
+    @push('scripts')
+
     <!-- Kirim data ke JS -->
     <script>
         window.pendaftarHarian = {
@@ -81,5 +83,9 @@
             data: @json($jumlahHarian)
         };
     </script>
+
+    @vite('resources/js/dashboardChart.js')
+    
+    @endpush
 
 </x-app-layout>
