@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Helpers\WhatsappHelper;
-use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\Kegiatan;
 use App\Models\Kecamatan;
-use App\Models\Pendaftaran;
+use App\Models\Kegiatan;
 use App\Models\Kuota;
+use App\Models\Pendaftaran;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class PendaftaranController extends Controller
 {
@@ -44,8 +45,37 @@ class PendaftaranController extends Controller
             'nama' => 'required',
             'alamat' => 'required',
             'whatsapp' => 'required|min:9',
+            'cf-turnstile-response' => 'required|string',
             // 'foto_kk' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        // Verifikasi Turnstile ke Cloudflare
+        $secret = config('services.turnstile.secret');
+        $token = $request->input('cf-turnstile-response');
+        $remoteIp = $request->ip();
+
+        $resp = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+            'secret' => $secret,
+            'response' => $token,
+            'remoteip' => $remoteIp,
+        ]);
+
+        if (!$resp->ok()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memverifikasi captcha (error komunikasi).',
+            ], 500);
+        }
+
+        $body = $resp->json();
+
+        if (empty($body['success']) || $body['success'] !== true) {
+            // kembalikan error 403 agar client tahu captcha tidak lolos
+            return response()->json([
+                'success' => false,
+                'message' => 'Verifikasi Captcha gagal. Silakan coba kembali.',
+            ], 403);
+        }
 
         // if ($request->hasFile('foto_kk')) {
         //     $path = $request->file('foto_kk')->store('berkas', 'public');
@@ -95,7 +125,7 @@ class PendaftaranController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Pendaftaran gagal karena data sudah terdaftar.',
-                'errors' => $errors
+                'errors' => $errors,
             ], 409);
 
         } else {
@@ -116,10 +146,10 @@ class PendaftaranController extends Controller
                 'kegiatan_id' => $id,
             ]);
 
-            $nama       = $request->nama;
-            $noAntrian  = $nextNomorUrut;
-            $phone      = '62' . substr($request->whatsapp, 1);
-            $link       = route('pendaftaran.download', encrypt($data->id));
+            $nama = $request->nama;
+            $noAntrian = $nextNomorUrut;
+            $phone = '62' . substr($request->whatsapp, 1);
+            $link = route('pendaftaran.download', encrypt($data->id));
 
             $message = "*Halo $nama,* Pendaftaran kamu berhasil ✅ Nomor Antrian: *$noAntrian* \nSilakan download bukti pendaftaran melalui link berikut: \n $link";
 
@@ -128,7 +158,7 @@ class PendaftaranController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Data berhasil disimpan, silahkan menunggu notifikasi undangan pengambilan paket subsidi melalui nomor whatsapp yang telah anda daftarkan atau download bukti pendaftaran di bawah ini.',
-                'data' => route('pendaftaran.download', encrypt($data->id))
+                'data' => route('pendaftaran.download', encrypt($data->id)),
             ]);
 
         }
@@ -161,7 +191,7 @@ class PendaftaranController extends Controller
         if (!$kuota) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data kuota tidak ditemukan'
+                'message' => 'Data kuota tidak ditemukan',
             ]);
         }
 

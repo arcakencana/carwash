@@ -20,6 +20,11 @@
     <div class="min-h-screen bg-gray-100">
         {{ $slot }}
     </div>
+
+    <!-- Cloudflare Turnstile -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
     @stack('scripts')
+    
 </body>
 </html>

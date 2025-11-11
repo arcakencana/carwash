@@ -14,8 +14,8 @@
             <!-- Kartu utama -->
             <div class="w-full sm:max-w-xl lg:max-w-2xl mt-5 mb-8 px-4 py-6 bg-white bg-opacity-80 shadow-lg overflow-hidden sm:rounded-lg backdrop-blur-sm">
 
-             <!-- Header -->
-             <div class="flex flex-col items-center mb-4">
+               <!-- Header -->
+               <div class="flex flex-col items-center mb-4">
                 <div class="flex items-center space-x-3 mt-4">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 w-auto">
                     <span class="text-3xl font-bold text-gray-800 dark:text-gray-900">SITEBUS MURAH</span>
@@ -52,8 +52,6 @@
 
                 <form id="form">
                     <input type="hidden" name="kegiatan_id" id="kegiatan_id" value="{{ $kegiatan->id }}">
-
-
 
                     <div class="space-y-4">
                         <div>
@@ -138,6 +136,17 @@
                             </label>
                         </div>
 
+                        <div class="mt-4">
+                            <!-- ✅ WIDGET TURNSTILE -->
+                            <div id="turnstile-container">
+                                <div class="cf-turnstile"
+                                data-sitekey="{{ config('services.turnstile.sitekey') }}"
+                                data-callback="turnstileCallback"></div>
+                            </div>
+
+                            <div id="turnstile-error" class="text-red-600 text-sm mt-1"></div>
+                        </div>
+
                     </div>
 
                     <!-- Submit Button -->
@@ -168,8 +177,13 @@
 
 @push('scripts')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
+    function turnstileCallback(token) {
+        console.log("Turnstile token:", token);
+    }
+</script>
+<script>
+
     $(document).ready(function() {
 
         $('#form').on('submit', function(e) {
@@ -203,7 +217,19 @@
                 return;
             }
 
+            // --- VALIDASI TURNSTILE CLIENT-SIDE ---
+            let turnstileToken = window.turnstile ? window.turnstile.getResponse() : '';
+
+            if (!turnstileToken) {
+                $('#turnstile-error').text('Silakan selesaikan verifikasi Captcha.');
+                return;
+            } else {
+                $('#turnstile-error').text('');
+            }
+
             let formData = new FormData(this);
+
+            formData.set('cf-turnstile-response', turnstileToken);
 
             $.ajax({
                 url: "{{ route('pendaftaran.store', encrypt($kegiatan->id)) }}",
@@ -242,7 +268,7 @@
                         `);
                         
                         $('#form')[0].reset();
-
+                        turnstile.reset();
                         // ✅ Scroll ke paling bawah
                         $('html, body').animate({
                             scrollTop: $(document).height()
@@ -261,29 +287,37 @@
                     }
                 },
                 error: function(err) {
+
+                    // reset widget juga saat error
+                    if (window.turnstile) {
+                    try { window.turnstile.reset(); } catch(e) { /* ignore */ }
+                    }
+
                     $('.error-message').html('');
 
-                    if (err.status === 422) {
+                    if (err.status === 422 || err.status === 409) {
 
                         // Validasi Laravel
                         let errors = err.responseJSON.errors;
                         $.each(errors, function(field, messages) {
                             $(`[data-error="${field}"]`).html(messages[0]);
                         });
-                    } else if (err.status === 409) {
-                        // Validasi duplikat data (custom)
-                        let errors = err.responseJSON.errors;
-                        $.each(errors, function(field, messages) {
-                            $(`[data-error="${field}"]`).html(messages[0]);
-                        });
+
+                    } else if (err.status === 403) {
+
+                        // captcha verification failed on server
+                        $('#turnstile-error').text(err.responseJSON?.message || 'Verifikasi Captcha gagal.');
+
                     } else {
+
                         showAlert('Terjadi kesalahan server.');
+
                     }
                 }
             });
         });
 
-        // === Menampilkan jumlah & sisa kuota berdasarkan kecamatan & kegiatan ===
+            // === Menampilkan jumlah & sisa kuota berdasarkan kecamatan & kegiatan ===
 $(document).on('change', '#kecamatan_id', function() {
 
     let kecamatan_id = $(this).val();

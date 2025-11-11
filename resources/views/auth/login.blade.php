@@ -56,18 +56,65 @@
                 </label>
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-                @endif
-
-                <x-primary-button class="ms-3">
-                    {{ __('Log in') }}
-                </x-primary-button>
+            <!-- Turnstile Captcha -->
+            <div class="mt-4">
+                <div class="cf-turnstile"
+                data-sitekey="{{ config('services.turnstile.sitekey') }}"
+                data-callback="turnstileLoginCallback">
             </div>
-        </form>
-    </div>
+
+            <p id="turnstile-error" class="text-red-600 text-sm mt-1"></p>
+        </div>
+
+        <div class="flex items-center justify-end mt-4">
+            @if (Route::has('password.request'))
+            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
+                {{ __('Forgot your password?') }}
+            </a>
+            @endif
+
+            <x-primary-button class="ms-3">
+                {{ __('Log in') }}
+            </x-primary-button>
+        </div>
+    </form>
 </div>
+</div>
+
+<script>
+    function turnstileLoginCallback(token) {
+        // token muncul di sini saat captcha selesai
+        window.loginTurnstileToken = token;
+        console.log("Login Turnstile token:", token);
+    }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const form = document.querySelector('form[action="{{ route('login') }}"]');
+
+        form.addEventListener('submit', function(e) {
+
+            let token = window.turnstile ? window.turnstile.getResponse() : '';
+
+            if (!token) {
+                e.preventDefault();
+                document.getElementById('turnstile-error').innerText =
+                "Silakan selesaikan verifikasi Captcha.";
+                return false;
+            }
+
+        // Tambahkan token sebagai hidden input
+            let input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'cf-turnstile-response';
+            input.value = token;
+            form.appendChild(input);
+        });
+
+    });
+</script>
+
+
 </x-guest-layout>
