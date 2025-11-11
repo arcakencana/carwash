@@ -14,8 +14,8 @@
             <!-- Kartu utama -->
             <div class="w-full sm:max-w-xl lg:max-w-2xl mt-5 mb-8 px-4 py-6 bg-white bg-opacity-80 shadow-lg overflow-hidden sm:rounded-lg backdrop-blur-sm">
 
-               <!-- Header -->
-               <div class="flex flex-col items-center mb-4">
+             <!-- Header -->
+             <div class="flex flex-col items-center mb-4">
                 <div class="flex items-center space-x-3 mt-4">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 w-auto">
                     <span class="text-3xl font-bold text-gray-800 dark:text-gray-900">SITEBUS MURAH</span>
@@ -181,6 +181,14 @@
     function turnstileCallback(token) {
         console.log("Turnstile token:", token);
     }
+
+    function showFormLoader() {
+        $("#form-loader").removeClass("hidden");
+    }
+    
+    function hideFormLoader() {
+        $("#form-loader").addClass("hidden");
+    }
 </script>
 <script>
 
@@ -238,9 +246,11 @@
                 processData: false,
                 contentType: false,
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                beforeSend: function() {},
+                beforeSend: function() {
+                    showFormLoader();
+                },
                 success: function(res) {
-
+                    hideFormLoader();
                     // Bersihkan error sebelumnya
                     $('.error-message').html('');
 
@@ -266,7 +276,7 @@
 
                             </div>
                         `);
-                        
+
                         $('#form')[0].reset();
                         turnstile.reset();
                         // ✅ Scroll ke paling bawah
@@ -287,7 +297,7 @@
                     }
                 },
                 error: function(err) {
-
+                    hideFormLoader();
                     // reset widget juga saat error
                     if (window.turnstile) {
                     try { window.turnstile.reset(); } catch(e) { /* ignore */ }
@@ -317,7 +327,7 @@
             });
         });
 
-            // === Menampilkan jumlah & sisa kuota berdasarkan kecamatan & kegiatan ===
+// === Menampilkan jumlah & sisa kuota berdasarkan kecamatan & kegiatan ===
 $(document).on('change', '#kecamatan_id', function() {
 
     let kecamatan_id = $(this).val();
@@ -357,12 +367,12 @@ $(document).on('change', '#kecamatan_id', function() {
 
 });
 
-        // === Menampilkan kelurahan berdasarkan kecamatan ===
+// === Menampilkan kelurahan berdasarkan kecamatan ===
 $(document).on('change', '#kecamatan_id', function() {
 
     let kecamatan_id = $(this).val();
 
-            // kosongkan dropdown kelurahan saat ganti kecamatan
+    // kosongkan dropdown kelurahan saat ganti kecamatan
     $('#kelurahan_id').html('<option value="">-- Pilih Kelurahan --</option>');
 
     if (!kecamatan_id) return;
