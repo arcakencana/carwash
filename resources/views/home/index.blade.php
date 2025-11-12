@@ -64,7 +64,7 @@
                                     </h2>
                                     <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={{ urlencode(url('/pendaftaran', encrypt($kegiatans->id))) }}"
                                     alt="QR Pendaftaran"
-                                    class="mx-auto rounded-lg shadow-md p-2 bg-white">
+                                    class="mx-auto rounded-lg shadow-md p-4 bg-white">
                                 </div>
                             </div>
 
