@@ -12,6 +12,7 @@ class Kuota extends Model
     protected $fillable = [
         'kegiatan_id',
         'kecamatan_id',
+        'kelurahan_id',
         'jumlah',
     ];
 

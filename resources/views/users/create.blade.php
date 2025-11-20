@@ -45,26 +45,37 @@
                 {{-- Role --}}
                 <div>
                     <label class="block text-gray-700 font-medium mb-1">Role</label>
-                    <select name="role" 
-                    class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
-                    <option value="">-- Pilih Role --</option>
-                    @foreach ($roles as $id => $name)
-                    <option value="{{ $name }}" {{ old('role') == $name ? 'selected' : '' }}>{{ $name }}</option>
-                    @endforeach
-                </select>
-                @error('role') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-            </div>
+                    <select name="role" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
+                        <option value="">-- Pilih Role --</option>
+                        @foreach ($roles as $id => $name)
+                        <option value="{{ $name }}" {{ old('role') == $name ? 'selected' : '' }}>{{ $name }}</option>
+                        @endforeach
+                    </select>
+                    @error('role') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                </div>
 
-            {{-- Tombol --}}
-            <div class="flex justify-end space-x-3 pt-4">
-                <a href="{{ route('users.index') }}" 
-                class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition">Batal</a>
-                <button type="submit" 
-                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Simpan</button>
-            </div>
+                {{-- Kelurahan --}}
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">Kelurahan</label>
+                    <select name="kelurahan_id" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
+                        <option value="">-- Pilih Kelurahan --</option>
+                        @foreach ($kelurahans as $id => $name)
+                        <option value="{{ $id }}" {{ old('kelurahan') == $name ? 'selected' : '' }}>{{ $name }}</option>
+                        @endforeach
+                    </select>
+                    @error('kelurahan') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                </div>
 
-        </form>
+                {{-- Tombol --}}
+                <div class="flex justify-end space-x-3 pt-4">
+                    <a href="{{ route('users.index') }}" 
+                    class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition">Batal</a>
+                    <button type="submit" 
+                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Simpan</button>
+                </div>
 
+            </form>
+
+        </div>
     </div>
-</div>
 </x-app-layout>

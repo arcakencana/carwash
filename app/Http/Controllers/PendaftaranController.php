@@ -2,33 +2,56 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Helpers\WhatsappHelper;
-use App\Models\Kecamatan;
 use App\Models\Kegiatan;
-use App\Models\Kuota;
 use App\Models\Pendaftaran;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
 
 class PendaftaranController extends Controller
 {
-    public function __construct()
+    public function index(Request $request, $id)
     {
-        //
-    }
+        $id_kegiatan = decrypt($id);
+        $kelurahan_id = Auth::user()->kelurahan_id;
+        $search = $request->input('search');
 
-    public function index(Request $request)
-    {
-        //
+        $query = Pendaftaran::query();
+
+        if ($search) {
+            $query->where('kk', 'like', "%{$search}%")
+            ->orWhere('ktp', 'like', "%{$search}%")
+            ->orWhere('nama', 'like', "%{$search}%");
+        }
+
+        $query->where([
+            'kegiatan_id' => $id_kegiatan,
+            'kelurahan_id' => $kelurahan_id,
+        ]);
+
+        $pendaftarans = $query->latest()->paginate(10);
+        $pendaftarans->appends(['search' => $search]);
+
+        $kuota = Helper::getKuotaKelurahan($id_kegiatan, $kelurahan_id);
+        $pendaftar = Helper::getPendaftaranKelurahan($id_kegiatan, $kelurahan_id);
+
+        $label = 'Jumlah Pendaftar ' . $kuota->name . ' ' . $pendaftar . ' dari ' . $kuota->jumlah;
+
+        return view('pendaftaran.index', compact('pendaftarans', 'search', 'id_kegiatan', 'label'));
     }
 
     public function create($id)
     {
         $id = decrypt($id);
+        $kelurahan_id = Auth::user()->kelurahan_id;
 
+        $kuota = Helper::getKuotaKelurahan($id, $kelurahan_id);
+        $pendaftar = Helper::getPendaftaranKelurahan($id, $kelurahan_id);
+
+        $data['label'] = 'Jumlah Pendaftar ' . $kuota->name . ' ' . $pendaftar . ' dari ' . $kuota->jumlah;
         $data['kegiatan'] = Kegiatan::where('id', $id)->first();
-        $data['kecamatan'] = Kecamatan::get();
 
         return view('pendaftaran.create', $data);
     }
@@ -38,64 +61,24 @@ class PendaftaranController extends Controller
         $id = decrypt($id);
 
         $request->validate([
-            'kecamatan_id' => 'required|integer',
-            'kelurahan_id' => 'required|integer',
             'kk' => 'required|integer',
             'ktp' => 'required|integer',
             'nama' => 'required',
             'alamat' => 'required',
             'whatsapp' => 'required|min:9',
-            'cf-turnstile-response' => 'required|string',
-            // 'foto_kk' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
-
-        // Verifikasi Turnstile ke Cloudflare
-        $secret = config('services.turnstile.secret');
-        $token = $request->input('cf-turnstile-response');
-        $remoteIp = $request->ip();
-
-        $resp = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
-            'secret' => $secret,
-            'response' => $token,
-            'remoteip' => $remoteIp,
-        ]);
-
-        if (!$resp->ok()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal memverifikasi captcha (error komunikasi).',
-            ], 500);
-        }
-
-        $body = $resp->json();
-
-        if (empty($body['success']) || $body['success'] !== true) {
-            // kembalikan error 403 agar client tahu captcha tidak lolos
-            return response()->json([
-                'success' => false,
-                'message' => 'Verifikasi Captcha gagal. Silakan coba kembali.',
-            ], 403);
-        }
-
-        // if ($request->hasFile('foto_kk')) {
-        //     $path = $request->file('foto_kk')->store('berkas', 'public');
-        // }
 
         $kk = $request->kk;
         $ktp = $request->ktp;
-        $whatsapp = $request->whatsapp;
 
         // Query cek apakah sudah ada
         $exists = Pendaftaran::query()
-        ->where(function ($q) use ($kk, $ktp, $whatsapp) {
+        ->where(function ($q) use ($kk, $ktp) {
             if ($kk) {
                 $q->where('kk', $kk);
             }
             if ($ktp) {
                 $q->orWhere('ktp', $ktp);
-            }
-            if ($whatsapp) {
-                $q->orWhere('whatsapp', $whatsapp);
             }
         })
         ->exists();
@@ -105,7 +88,6 @@ class PendaftaranController extends Controller
 
             $existing = Pendaftaran::where('kk', $kk)
             ->orWhere('ktp', $ktp)
-            ->orWhere('whatsapp', $whatsapp)
             ->first();
 
             $errors = [];
@@ -118,10 +100,6 @@ class PendaftaranController extends Controller
                 $errors['ktp'] = ['Gagal, Nomor KTP ini sudah digunakan untuk pendaftaran lain.'];
             }
 
-            if ($existing->whatsapp == $whatsapp) {
-                $errors['whatsapp'] = ['Gagal, Nomor WhatsApp ini sudah digunakan untuk pendaftaran lain.'];
-            }
-
             return response()->json([
                 'success' => false,
                 'message' => 'Pendaftaran gagal karena data sudah terdaftar.',
@@ -130,7 +108,9 @@ class PendaftaranController extends Controller
 
         } else {
 
-            $nextNomorUrut = Pendaftaran::getNextNomorUrut($request->kecamatan_id);
+            $kelurahan_id = Auth::user()->kelurahan_id;
+            $kecamatan = Helper::getKecamatanByKelurahan($kelurahan_id);
+            $nextNomorUrut = Helper::getNextNomorUrutKelurahan($id, $kelurahan_id);
 
             $data = Pendaftaran::create([
                 'kk' => $request->kk,
@@ -140,9 +120,8 @@ class PendaftaranController extends Controller
                 'alamat' => $request->alamat,
                 'lansia_disabilitas' => 'tidak',
                 'antrian' => $nextNomorUrut,
-                // 'berkas' => $path,
-                'kecamatan_id' => $request->kecamatan_id,
-                'kelurahan_id' => $request->kelurahan_id,
+                'kecamatan_id' => $kecamatan->id,
+                'kelurahan_id' => $kelurahan_id,
                 'kegiatan_id' => $id,
             ]);
 
@@ -165,63 +144,111 @@ class PendaftaranController extends Controller
 
     }
 
+    public function edit($id)
+    {
+        $id = decrypt($id);
+
+        $pendaftarans = Pendaftaran::findOrFail($id);
+
+        return view('pendaftaran.edit', compact('pendaftarans'));
+
+    }
+
+    public function update(Request $request, $id)
+    {
+        $id = decrypt($id);
+
+        $request->validate([
+            'kegiatan_id' => 'required',
+            'kk' => 'required|integer',
+            'ktp' => 'required|integer',
+            'nama' => 'required',
+            'alamat' => 'required',
+            'whatsapp' => 'required|min:9',
+        ]);
+
+        $kk = $request->kk;
+        $ktp = $request->ktp;
+
+        // Query cek apakah sudah ada
+        $exists = Pendaftaran::where(function ($q) use ($kk, $ktp) {
+            $q->where('kk', $kk)
+            ->orWhere('ktp', $ktp);
+        })
+        ->when($id, fn ($q) => $q->where('id', '!=', $id))
+        ->exists();
+
+
+        // Jika sudah ada -> fail
+        if ($exists) {
+
+            return back()->with('error', 'Data pendaftaran sudah');
+
+        } else {
+
+            $data = Pendaftaran::where('id', $id)
+            ->update([
+                'kk' => $request->kk,
+                'ktp' => $request->ktp,
+                'nama' => $request->nama,
+                'whatsapp' => $request->whatsapp,
+                'alamat' => $request->alamat,
+            ]);
+
+
+            return redirect()->route('pendaftaran.index', $request->kegiatan_id)->with('success', 'Data berhasil update!');
+
+        }
+    }
+
+    public function destroy(Request $request)
+    {
+        try {
+
+            $id = decrypt($request->id);
+
+            Pendaftaran::where('id', $id)->delete();
+
+            return redirect()
+            ->route('pendaftaran.index', $request->kegiatan_id)
+            ->with('success', 'Pendaftaran berhasil dihapus!');
+
+        } catch (\Exception $e) {
+
+            // Bisa tulis log jika ingin debug
+            \Log::error('Gagal menghapus pendaftaran: ' . $e->getMessage());
+
+            return redirect()
+            ->route('pendaftaran.index', $request->kegiatan_id)
+            ->with('error', 'Gagal menghapus pendaftaran! Silakan coba lagi.');
+        }
+    }
+
     public function download($id)
     {
         $id = decrypt($id);
 
-        $pendaftaran = Pendaftaran::select('nama_kegiatan', 'tanggal_kegiatan', 'kk', 'ktp', 'nama', 'alamat', 'whatsapp', 'kecamatans.name as nama_kecamatan', 'lansia_disabilitas', 'antrian', 'pendaftarans.created_at as tanggal_pendaftaran')
+        $pendaftaran = Pendaftaran::select('pendaftarans.id as pendaftaran_id', 'nama_kegiatan', 'tanggal_kegiatan', 'kk', 'ktp', 'nama', 'alamat', 'whatsapp', 'kecamatans.name as nama_kecamatan', 'kelurahans.name as nama_kelurahan', 'antrian', 'pendaftarans.created_at as tanggal_pendaftaran', 'kuotas.lokasi')
         ->join('kecamatans', 'pendaftarans.kecamatan_id', '=', 'kecamatans.id')
+        ->join('kelurahans', 'pendaftarans.kelurahan_id', '=', 'kelurahans.id')
         ->join('kegiatans', 'pendaftarans.kegiatan_id', '=', 'kegiatans.id')
+        ->join('kuotas', 'pendaftarans.kelurahan_id', '=', 'kuotas.kelurahan_id')
         ->where('pendaftarans.id', $id)
         ->first();
 
-        $url = route('pendaftaran.download', encrypt($pendaftaran->id));
+        if ($pendaftaran) {
 
-        $pdf = Pdf::loadView('pendaftaran.download', compact('pendaftaran', 'url'));
+            $url = route('verifikasi.show', encrypt($pendaftaran->pendaftaran_id));
 
-        return $pdf->download($pendaftaran->kk . '.pdf');
-    }
+            $pdf = Pdf::loadView('pendaftaran.download', compact('pendaftaran', 'url'));
 
-    public function getKuota($kegiatan_id, $kecamatan_id)
-    {
-        $kuota = Kuota::where('kegiatan_id', $kegiatan_id)
-        ->where('kecamatan_id', $kecamatan_id)
-        ->first();
+            return $pdf->download($pendaftaran->kk . '.pdf');
 
-        if (!$kuota) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data kuota tidak ditemukan',
-            ]);
+        } else {
+
+            abort(404);
         }
 
-        // Hitung jumlah pendaftar pada kegiatan dan kecamatan yang sama
-        $jumlah_pendaftar = Pendaftaran::where('kegiatan_id', $kegiatan_id)
-        ->where('kecamatan_id', $kecamatan_id)
-        ->count();
-
-        $sisa = $kuota->jumlah - $jumlah_pendaftar;
-
-        return response()->json([
-            'success' => true,
-            'jumlah' => $kuota->jumlah,
-            'sisa' => max($sisa, 0),
-        ]);
-    }
-
-    public function edit(Kegiatan $kegiatan)
-    {
-        //
-    }
-
-    public function update(Request $request, Kegiatan $kegiatan)
-    {
-        //
-    }
-
-    public function destroy(Kegiatan $kegiatan)
-    {
-        //
     }
 
 }

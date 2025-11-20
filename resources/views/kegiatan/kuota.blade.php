@@ -22,15 +22,24 @@
                         <table class="w-full border border-gray-200 shadow-sm overflow-hidden text-sm">
                             <thead class="bg-gray-100 text-gray-700">
                                 <tr>
-                                    <th class="py-3 px-4 text-left w-1/3">Kecamatan</th>
+                                    <th class="py-3 px-4 text-left w-1/1">No</th>
+                                    <th class="py-3 px-4 text-left w-1/2">Kecamatan</th>
+                                    <th class="py-3 px-4 text-left w-1/2">Kelurahan</th>
                                     <th class="py-3 px-4 text-left">Kuota</th>
+                                    <th class="py-3 px-4 text-left w-1/3">Lokasi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($kuota as $value)
                                 <tr class="border-t hover:bg-gray-50 transition">
                                     <td class="py-2 px-4 font-medium text-gray-800">
-                                        {{ $value->name }}
+                                        {{ $loop->iteration }}
+                                    </td>
+                                    <td class="py-2 px-4 font-medium text-gray-800">
+                                        {{ $value->nama_kecamatan }}
+                                    </td>
+                                    <td class="py-2 px-4 font-medium text-gray-800">
+                                        {{ $value->nama_kelurahan }}
                                     </td>
                                     <td class="py-2 px-4 font-medium text-gray-800">
                                         <input 
@@ -38,6 +47,14 @@
                                         name="jumlah[{{ $value->id }}]" 
                                         value="{{ $value->jumlah }}" 
                                         class="border rounded px-2 py-1 w-24 text-right"
+                                        >
+                                    </td>
+                                    <td class="py-2 px-4 font-medium text-gray-800">
+                                        <input 
+                                        type="text" 
+                                        name="lokasi[{{ $value->id }}]" 
+                                        value="{{ $value->lokasi }}" 
+                                        class="border rounded px-2 py-1 w-full text-right"
                                         >
                                     </td>
                                 </tr>

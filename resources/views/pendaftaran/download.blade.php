@@ -22,24 +22,6 @@
             padding: 20px;
         }
 
-        /* Header dan Judul */
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 16pt;
-            color: #333;
-        }
-        .header p {
-            margin: 5px 0 0;
-            font-size: 11pt;
-            font-weight: bold;
-        }
-
         /* Layout Data (menggunakan float/flexbox sederhana yang didukung DOMPDF) */
         .data-section {
             margin-bottom: 15px;
@@ -67,10 +49,10 @@
         
         /* Layout Barcode dan Nomor Antrian */
         .footer-info {
-            margin-top: 30px;
+            margin-top: 10px;
             text-align: center;
             border-top: 2px solid #333;
-            padding-top: 15px;
+            padding-top: 10px;
         }
         
         .barcode-area {
@@ -103,14 +85,48 @@
        .data-table td:last-child {
         width: 65%;
     }
+    .kop-surat {
+        width: 100%;
+        display: flex;
+        align-items: center; /* <-- ini yang bikin logo & teks sejajar */
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #000; /* <-- GARIS BAWAH */
+    }
+
+    .kop-logo {
+        width: 10px;
+        height: 10px;
+        object-fit: contain;
+        margin-right: 20px;
+    }
+
+    .kop-text {
+        flex: 1;
+        text-align: center;
+        line-height: 1.3;
+    }
+
+    .kop-text h2, 
+    .kop-text h3, 
+    .kop-text p {
+        margin: 0;
+        padding: 0;
+    }
 </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>FORMULIR PENDAFTARAN</h1>
-            <p>{{ strtoupper($pendaftaran->nama_kegiatan) }}</p>
-            <small>Tanggal Kegiatan: {{ \Carbon\Carbon::parse($pendaftaran->tanggal_kegiatan)->isoFormat('dddd, D MMMM YYYY') }}</small>
+
+        <div class="kop-surat">
+            {{-- <img src="{{ asset('images/logo.png') }}" class="kop-logo" alt="Logo"> --}}
+
+            <div class="kop-text">
+                <h2>PEMERINTAH KOTA BATAM</h2>
+                <h3>DINAS PERINDUSTRIAN DAN PERDAGANGAN</h3>
+                <p>Jl. Raja Isa No. 17 Lt.5 Kantor Bersama, Kota Batam</p>
+                <p>Telp: (0778) 4168417 – Email: disperindag.batam@batam.go.id</p>
+            </div>
         </div>
 
         <div class="data-section">
@@ -136,13 +152,9 @@
                     <td>No. WhatsApp</td>
                     <td>: {{ $pendaftaran->whatsapp }}</td>
                 </tr>
-                <tr>
-                    <td>Lansia / Disabilitas</td>
-                    <td>: {{ $pendaftaran->lansia_disabilitas }}</td>
-                </tr>
             </table>
         </div>
-        
+
         <div class="data-section">
             <h3>Detail Pendaftaran</h3>
             <table class="data-table">
@@ -153,6 +165,18 @@
                 <tr>
                     <td>Kecamatan</td>
                     <td>: {{ $pendaftaran->nama_kecamatan }}</td>
+                </tr>
+                <tr>
+                    <td>Kelurahan</td>
+                    <td>: {{ $pendaftaran->nama_kelurahan }}</td>
+                </tr>
+                <tr>
+                    <td>Lokasi Pembelian</td>
+                    <td>: {{ $pendaftaran->lokasi }}</td>
+                </tr>
+                <tr>
+                    <td>Waktu</td>
+                    <td>: {{ \App\Helpers\Helper::getJamAntrian($pendaftaran->antrian) }}</td>
                 </tr>
             </table>
         </div>
@@ -167,16 +191,18 @@
 
                 {{-- PASTIKAN UKURAN BERBENTUK PERSEGI UNTUK QR CODE --}}
                 @if(isset($url))
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ urlencode($url) }}">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=125x125&data={{ urlencode($url) }}">
                 @else
                 <p style="color: red;">[QR Code tidak tersedia]</p>
                 @endif
-                <p style="font-size: 8pt; margin: 5px 0 0;">Verifikasi Kode: {{ $pendaftaran->kk }}</p>
+                {{-- <p style="font-size: 8pt; margin: 5px 0 0;">Verifikasi Kode: {{ $pendaftaran->kk }}</p> --}}
             </div>
         </div>
 
-        <div style="margin-top: 50px; text-align: center; font-size: 8pt; color: #777;">
-            Dokumen ini dihasilkan secara otomatis. Tidak memerlukan tanda tangan.
+        <div style="margin-top: 10px; text-align: left; font-size: 8pt; color: #777;">
+            Keterangan :<br>
+            1. Peserta wajib datang langsung dengan membawa KTP / KK Asli sesuai data pendaftaran diatas.<br>
+            2. Membawa uang Rp. 100,000 untuk pembelian paket barang kebutuhan pokok senilai Rp. 200,000 pada kegiatan Pasar Murah Bersubsidi.
         </div>
 
     </div>

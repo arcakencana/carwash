@@ -7,7 +7,7 @@
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
-            
+
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <a href="{{ route('users.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition text-center sm:text-left w-full sm:w-auto">+ Tambah User
                 </a>
@@ -45,7 +45,10 @@
                                     {{ $user->roles->pluck('name')->join(', ') ?: 'Tidak ada' }}
                                 </td>
                                 <td class="py-2 px-4 text-center">
+                                    <a href="{{ route('users.assignRole', $user) }}" class="text-teal-600 hover:underline mr-3">Role</a>
+                                    <span class="text-gray-400">|</span>
                                     <a href="{{ route('users.edit', $user) }}" class="text-blue-600 hover:underline">Edit</a>
+                                    <span class="text-gray-400">|</span>
                                     <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline">
                                         @csrf @method('DELETE')
                                         <button class="text-red-600 hover:underline" onclick="return confirm('Hapus user ini?')">Hapus</button>

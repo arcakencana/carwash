@@ -19,21 +19,43 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    @role('admin')
+                    @role('kegiatan')
                     <x-nav-link :href="route('kegiatan.index')" :active="request()->routeIs('kegiatan.*')">
                         {{ __('Kegiatan') }}
                     </x-nav-link>
                     @endrole
 
                     @role('admin')
-                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                        {{ __('Manajemen User') }}
-                    </x-nav-link>
+                    <div x-data="{ open: false }" class="relative flex items-center">
+
+                        <!-- Tombol utama mengikuti style x-nav-link -->
+                        <button @click="open = !open" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100 focus:outline-none transition duration-150 ease-in-out">
+                            <span>Manajemen</span>
+                            <svg class="ms-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.08 1.04l-4.25 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                                clip-rule="evenodd" />
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown -->
+                        <div x-show="open" @click.outside="open = false" class="absolute left-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-2 mt-5 z-50">
+                            <a href="{{ route('users.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                Manajemen User
+                            </a>
+
+                            <a href="{{ route('roles.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                Manajemen Role
+                            </a>
+                        </div>
+                    </div>
                     @endrole
+
                 </div>
 
             </div>
@@ -85,19 +107,40 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
+
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            @role('admin')
+
+            @role('kegiatan')
             <x-responsive-nav-link :href="route('kegiatan.index')" :active="request()->routeIs('kegiatan.*')">
                 {{ __('Kegiatan') }}
             </x-responsive-nav-link>
             @endrole
+
             @role('admin')
-            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                {{ __('Manajemen User') }}
-            </x-responsive-nav-link>
+            <div x-data="{ openAdminMobile: false }" class="px-4">
+                <button @click="openAdminMobile = ! openAdminMobile" class="flex items-center w-full px-3 py-2 text-left text-gray-600 dark:text-gray-300">
+                    Manajemen
+                    <svg class="ms-auto h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                        d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.08 1.04l-4.25 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                        clip-rule="evenodd" />
+                    </svg>
+                </button>
+
+                <div x-show="openAdminMobile" class="ms-4 mt-1 space-y-1">
+                    <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                        {{ __('Manajemen User') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
+                        {{ __('Manajemen Role') }}
+                    </x-responsive-nav-link>
+                </div>
+            </div>
             @endrole
+
         </div>
 
         <!-- Responsive Settings Options -->
@@ -116,8 +159,7 @@
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
 
-                    <x-responsive-nav-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
-                        {{ __('Log Out') }}
+                    <x-responsive-nav-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">{{ __('Log Out') }}
                     </x-responsive-nav-link>
                 </form>
             </div>

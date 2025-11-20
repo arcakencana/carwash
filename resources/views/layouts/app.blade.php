@@ -13,6 +13,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -20,7 +21,7 @@
     <style>
         /* Pagination custom color */
         .pagination .active span {
-            background-color: #2563eb !important; /* biru-600 */
+            background-color: #2563eb !important;
             color: white !important;
             border-color: #2563eb !important;
         }
@@ -28,16 +29,25 @@
             color: #2563eb !important;
         }
         .pagination a:hover {
-            background-color: #dbeafe !important; /* biru muda hover */
+            background-color: #dbeafe !important;
         }
+
+        /* Popup animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
     </style>
 
+    @stack('styles') 
 </head>
+
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
+
         @include('layouts.navigation')
 
-        <!-- Page Heading -->
         @isset($header)
         <header class="bg-white shadow">
             <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -46,7 +56,7 @@
         </header>
         @endisset
 
-        <!-- 🔔 Flash Message (dengan icon & animasi) -->
+        <!-- Flash Notification -->
         @if (session('success') || session('error') || session('info'))
         <div 
         id="alert"
@@ -56,54 +66,78 @@
         @elseif (session('error')) bg-red-600 
         @else bg-blue-600 @endif"
         >
-        <!-- Icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" 
-        class="w-5 h-5 flex-shrink-0"
-        fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        @if (session('success'))
-        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-        @elseif (session('error'))
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-        @else
-        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 20h.01M12 4h.01" />
-        @endif
-    </svg>
+        <span class="font-medium">
+            {{ session('success') ?? session('error') ?? session('info') }}
+        </span>
+    </div>
 
-    <!-- Pesan -->
-    <span class="font-medium">
-        {{ session('success') ?? session('error') ?? session('info') }}
-    </span>
+    <script>
+        const alertBox = document.getElementById('alert');
+        if (alertBox) {
+            setTimeout(() => {
+                alertBox.classList.remove('opacity-0', 'translate-y-[-10px]');
+                alertBox.classList.add('opacity-100', 'translate-y-0');
+            }, 100);
+
+            setTimeout(() => {
+                alertBox.classList.add('opacity-0', 'translate-y-[-10px]');
+                setTimeout(() => alertBox.remove(), 700);
+            }, 3000);
+        }
+    </script>
+    @endif
+
+    <!-- Page Content -->
+    <main>
+        {{ $slot }}
+    </main>
+
+</div>
+
+<!-- 🔔 GLOBAL POPUP MODAL -->
+<div id="alertModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white w-80 sm:w-96 rounded-lg shadow-lg p-5 relative animate-fadeIn">
+
+        <!-- Tombol X -->
+        <button id="closeAlertIcon" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-lg">
+            ✕
+        </button>
+
+        <h3 class="text-lg font-semibold mb-3">Pemberitahuan</h3>
+        <p id="alertMessage" class="text-gray-700"></p>
+
+        <div class="mt-4 text-right">
+            <button id="closeAlert" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Tutup
+            </button>
+        </div>
+    </div>
 </div>
 
 <script>
-    const alertBox = document.getElementById('alert');
-    if (alertBox) {
-            // Fade-in animasi
-        setTimeout(() => {
-            alertBox.classList.remove('opacity-0', 'translate-y-[-10px]');
-            alertBox.classList.add('opacity-100', 'translate-y-0');
-        }, 100);
-
-            // Auto close setelah 3 detik
-        setTimeout(() => {
-            alertBox.classList.add('opacity-0', 'translate-y-[-10px]');
-            setTimeout(() => alertBox.remove(), 700);
-        }, 3000);
+    // Fungsi global untuk munculkan popup
+    function showAlert(message) {
+        $('#alertMessage').text(message);
+        $('#alertModal').removeClass('hidden');
     }
+
+    // Tombol close
+    $(document).on('click', '#closeAlert, #closeAlertIcon', function() {
+        $('#alertModal').addClass('hidden');
+    });
+
+    // Tutup kalau klik area luar
+    $(document).on('click', function(e) {
+        if ($(e.target).is('#alertModal')) {
+            $('#alertModal').addClass('hidden');
+        }
+    });
 </script>
-@endif
-
-<!-- Page Content -->
-<main>
-    {{ $slot }}
-</main>
-
-</div>
 
 <!-- Cloudflare Turnstile -->
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
-@stack('scripts') 
+@stack('scripts')
 
 </body>
 </html>

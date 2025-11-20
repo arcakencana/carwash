@@ -22,6 +22,10 @@ class Pendaftaran extends Model
         'kelurahan_id',
         'kegiatan_id',
         'antrian',
+        'latitude',
+        'longitude',
+        'captured_at',
+        'photo_path',
     ];
 
     public static function getNextNomorUrut(string $kecamatanId): int

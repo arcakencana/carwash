@@ -3,21 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kegiatan;
-use App\Models\Kecamatan;
+use App\Models\Kelurahan;
 use App\Models\Kuota;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 
 class KegiatanController extends Controller
 {
-    public function __construct()
-    {
-        // hanya admin yang bisa kelola kegiatan
-        $this->middleware(['auth', 'role:admin']);
-    }
-
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -58,30 +51,21 @@ class KegiatanController extends Controller
 
         $kegiatan = Kegiatan::create($data);
 
-        $kecamatan = Kecamatan::get();
+        $kelurahan = Kelurahan::get();
 
-        foreach ($kecamatan as $value) {
+        foreach ($kelurahan as $value) {
 
             Kuota::create([
-                'kegiatan_id'   => $kegiatan->id,
-                'kecamatan_id'  => $value->id,
-                'jumlah'        => 0,
+                'kegiatan_id' => $kegiatan->id,
+                'kecamatan_id' => $value->kecamatan_id,
+                'kelurahan_id' => $value->id,
+                'jumlah' => 0,
             ]);
 
         }
 
         return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil ditambahkan!');
     }
-
-    // public function show(string $id)
-    // {
-    //     $id = decrypt($id);
-
-    //     $data['acara'] = Acara::with('ruangan')->where('id', $id)->first();
-    //     $data['title'] = $data['acara']->nama_acara;
-
-    //     return view('acara.show', $data);
-    // }
 
     public function edit(Kegiatan $kegiatan)
     {
@@ -113,12 +97,29 @@ class KegiatanController extends Controller
 
     public function destroy(Kegiatan $kegiatan)
     {
-        if ($kegiatan->banner) {
-            Storage::disk('public')->delete($kegiatan->banner);
-        }
-        $kegiatan->delete();
+        try {
 
-        return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil dihapus!');
+            // Hapus file banner jika ada
+            if ($kegiatan->banner) {
+                Storage::disk('public')->delete($kegiatan->banner);
+            }
+
+            // Hapus data kegiatan
+            $kegiatan->delete();
+
+            return redirect()
+            ->route('kegiatan.index')
+            ->with('success', 'Kegiatan berhasil dihapus!');
+
+        } catch (\Exception $e) {
+
+            // Bisa tulis log jika ingin debug
+            \Log::error('Gagal menghapus kegiatan: ' . $e->getMessage());
+
+            return redirect()
+            ->route('kegiatan.index')
+            ->with('error', 'Gagal menghapus kegiatan! Silakan coba lagi.');
+        }
     }
 
     public function kuota($id)
@@ -129,9 +130,10 @@ class KegiatanController extends Controller
         ->where('id', $id)
         ->first();
 
-        $kuota = Kuota::select('kuotas.id', 'name', 'jumlah')
+        $kuota = Kuota::select('kuotas.id', 'kecamatans.name as nama_kecamatan', 'kelurahans.name as nama_kelurahan', 'jumlah', 'lokasi')
         ->join('kegiatans', 'kuotas.kegiatan_id', '=', 'kegiatans.id')
         ->join('kecamatans', 'kuotas.kecamatan_id', '=', 'kecamatans.id')
+        ->join('kelurahans', 'kuotas.kelurahan_id', '=', 'kelurahans.id')
         ->where('kegiatan_id', $id)
         ->get();
 
@@ -140,24 +142,17 @@ class KegiatanController extends Controller
 
     public function kuotaUpdateMassal(Request $request)
     {
-        $data = $request->input('jumlah');
+        $jumlah = $request->input('jumlah');
+        $lokasi = $request->input('lokasi');
 
-        foreach ($data as $id => $jumlah) {
-            Kuota::where('id', $id)->update(['jumlah' => $jumlah]);
+        foreach ($jumlah as $id => $value) {
+            Kuota::where('id', $id)->update([
+                'jumlah' => $value,
+                'lokasi' => $lokasi[$id] ?? null,
+            ]);
         }
 
         return redirect()->back()->with('success', 'Kuota berhasil diperbarui!');
     }
 
-
-    public function exportPdf($id)
-    {
-        $id = Crypt::decrypt($id);
-
-        $kegiatan = Kegiatan::where('id', $id)->first();
-
-        $pdf = Pdf::loadView('kegiatan.pdf', compact('kegiatan'));
-
-        return $pdf->stream('kegiatan.pdf');
-    }
 }
