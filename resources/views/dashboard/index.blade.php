@@ -2,68 +2,70 @@
 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-900 leading-tight">
-            {{ __('Daftar Kegiatan') }}
+            {{ __('Dashboard') }}
         </h2>
     </x-slot>
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
-            <div class="mt-6 bg-white shadow rounded p-4">
-                <div class="overflow-x-auto">
-                    <table class="w-full border border-gray-200 shadow-sm overflow-hidden text-sm">
-                        <thead class="bg-gray-100 text-gray-700">
-                            <tr>
-                                <th class="py-3 px-4 text-left">Nama Kegiatan</th>
-                                <th class="py-3 px-4 text-left w-1/3">Deskripsi</th>
-                                <th class="py-3 px-4 text-left">Tanggal</th>
-                                <th class="py-3 px-4 text-center">Kuota</th>
-                                <th class="py-3 px-4 text-center">Banner</th>
-                                <th class="py-2 px-4 text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($kegiatans as $kegiatan)
-                            <tr class="border-t hover:bg-gray-50 transition">
-                                <td class="py-2 px-4 font-medium text-gray-800">
-                                    {{ $kegiatan->nama_kegiatan }}
-                                </td>
-                                <td class="py-2 px-4 text-gray-600 max-w-xs truncate" title="{{ $kegiatan->deskripsi }}">
-                                    {{ $kegiatan->deskripsi }}
-                                </td>
-                                <td class="py-2 px-4 text-gray-600">
-                                    {{ \Carbon\Carbon::parse($kegiatan->tanggal_kegiatan)->format('d M Y, H:i') }}
-                                </td>
-                                <td class="py-2 px-4 text-center text-gray-600">
-                                    {{ number_format($kegiatan->kuota_peserta) }}
-                                </td>
-                                <td class="py-2 px-4 text-center">
-                                    @if ($kegiatan->banner)
-                                    <img src="{{ asset('storage/'.$kegiatan->banner) }}" alt="" class="w-20 h-12 object-cover rounded">
-                                    @else
-                                    <span class="text-gray-400 italic text-xs">Tidak ada</span>
-                                    @endif
-                                </td>
-                                <td class="py-2 px-4 text-center">
-                                    @role('pendaftaran')
-                                    <a href="{{ route('pendaftaran.index', encrypt($kegiatan->id)) }}" class="text-blue-600 hover:underline">Pendaftaran</a>
-                                    <span class="text-gray-400">|</span>
-                                    @endrole
-                                    @role('admin')
-                                    <a href="{{ route('pendaftaran-khusus.create', encrypt($kegiatan->id)) }}" class="text-blue-600 hover:underline">Pendaftaran Khusus</a>
-                                    <span class="text-gray-400">|</span>
-                                    @endrole
-                                    <a href="{{ route('kegiatan.pdf', encrypt($kegiatan->id)) }}" class="text-blue-600 hover:underline" target="_blank">Cetak</a>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+        <div class="max-w-7xl mx-auto px-4">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                <!-- Total Pendaftaran -->
+                <div class="flex items-center p-5 bg-blue-500 text-white rounded-xl shadow-md">
+                    <div class="text-4xl opacity-80">
+                        📄
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm uppercase font-semibold opacity-90">Total Pendaftaran</p>
+                        <h3 class="text-3xl font-bold">{{ $total_pendaftaran }}</h3>
+                    </div>
                 </div>
-                <div class="mt-4">
-                    {{ $kegiatans->links('vendor.pagination.custom') }}
+
+                <!-- Total Terverifikasi -->
+                <div class="flex items-center p-5 bg-green-500 text-white rounded-xl shadow-md">
+                    <div class="text-4xl opacity-80">
+                        ✔️
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm uppercase font-semibold opacity-90">Terverifikasi</p>
+                        <h3 class="text-3xl font-bold">{{ $total_terverifikasi }}</h3>
+                    </div>
                 </div>
+
+                <!-- Total Belum Verifikasi -->
+                <div class="flex items-center p-5 bg-yellow-500 text-white rounded-xl shadow-md">
+                    <div class="text-4xl opacity-80">
+                        ⏳
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm uppercase font-semibold opacity-90">Belum Verifikasi</p>
+                        <h3 class="text-3xl font-bold">{{ $total_belum }}</h3>
+                    </div>
+                </div>
+
+                <!-- Total User -->
+                <div class="flex items-center p-5 bg-red-500 text-white rounded-xl shadow-md">
+                    <div class="text-4xl opacity-80">
+                        👤
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm uppercase font-semibold opacity-90">Total User</p>
+                        <h3 class="text-3xl font-bold">{{ $total_user }}</h3>
+                    </div>
+                </div>
+
             </div>
+
+            <div class="mt-8 bg-white p-6 rounded-xl shadow">
+                <h2 class="text-lg font-bold mb-4">Grafik Pendaftaran Harian</h2>
+                <canvas id="pendaftaranChart" class="w-full"></canvas>
+            </div>
+
         </div>
     </div>
 
+
+    @vite(['resources/js/dashboardChart.js'])
+    
 </x-app-layout>

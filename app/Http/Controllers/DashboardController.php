@@ -2,25 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Kegiatan;
+use App\Models\Pendaftaran;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
-        $query = Kegiatan::query();
+        return view('dashboard.index', [
+            'total_pendaftaran'   => Pendaftaran::count(),
+            'total_terverifikasi' => Pendaftaran::where('photo_path', '!=', null)->count(),
+            'total_belum'         => Pendaftaran::where('photo_path', '=', null)->count(),
+            'total_user'          => User::count(),
+        ]);
+    }
 
-        if ($search) {
-            $query->where('nama_kegiatan', 'like', "%{$search}%")
-            ->orWhere('deskripsi', 'like', "%{$search}%");
-        }
+    public function grafikHarian()
+    {
+        $data = Pendaftaran::select(
+            DB::raw('DATE(created_at) as tanggal'),
+            DB::raw('COUNT(*) as total')
+        )
+        ->groupBy('tanggal')
+        ->orderBy('tanggal')
+        ->get();
 
-        $kegiatans = $query->latest()->paginate(10);
-        $kegiatans->appends(['search' => $search]);
-
-        return view('dashboard.index', compact('kegiatans', 'search'));
+        return response()->json($data);
     }
 
 }

@@ -24,6 +24,10 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('daftar-kegiatan')" :active="request()->routeIs('daftar-kegiatan')">
+                        {{ __('Daftar Kegiatan') }}
+                    </x-nav-link>
+
                     @role('kegiatan')
                     <x-nav-link :href="route('kegiatan.index')" :active="request()->routeIs('kegiatan.*')">
                         {{ __('Kegiatan') }}

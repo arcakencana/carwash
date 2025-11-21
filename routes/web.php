@@ -2,17 +2,23 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+    return redirect('/login');
+});
+
 Route::get('/register', function () {
     return redirect('/login');
 });
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
+//Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 
 
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
     ->name('dashboard');
+
+    Route::get('/api/dashboard/harian', [App\Http\Controllers\DashboardController::class, 'grafikHarian']);
 
     //profile
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])
@@ -25,8 +31,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-kelurahan/{kecamatan_id}', [App\Http\Controllers\WilayahController::class, 'getKelurahan'])
     ->name('getKelurahan');
 
-    Route::middleware('role:dashboard')->group(function () {
-        //
+    // Route::middleware('role:dashboard')->group(function () {
+    //     //
+    // });
+
+    Route::middleware('role:daftar-kegiatan')->group(function () {
+
+        Route::get('/daftar-kegiatan', [App\Http\Controllers\DaftarKegiatanController::class, 'index'])
+        ->name('daftar-kegiatan');
+
     });
 
     Route::middleware('role:pendaftaran')->group(function () {

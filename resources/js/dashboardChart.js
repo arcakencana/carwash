@@ -1,31 +1,27 @@
-import { Chart, registerables } from 'chart.js';
-Chart.register(...registerables);
+import Chart from "chart.js/auto";
 
-// Ambil data dari blade (window.pendaftarHarian)
-const ctx = document.getElementById('pendaftarChart').getContext('2d');
+document.addEventListener("DOMContentLoaded", async () => {
+    const ctx = document.getElementById("pendaftaranChart");
+    if (!ctx) return;
 
-new Chart(ctx, {
-    type: 'line', // tipe grafik line
-    data: {
-        labels: window.pendaftarHarian?.labels || [], // tanggal
-        datasets: [{
-            label: 'Total Pendaftar Harian',
-            data: window.pendaftarHarian?.data || [], // jumlah
-            borderColor: 'rgb(37, 99, 235)', // biru
-            backgroundColor: 'rgba(37, 99, 235, 0.2)',
-            tension: 0.3, // curve smooth
-            fill: true,
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: { display: true },
-            tooltip: { mode: 'index', intersect: false },
-        },
-        scales: {
-            x: { display: true, title: { display: true, text: 'Tanggal' } },
-            y: { display: true, title: { display: true, text: 'Jumlah Pendaftar' }, beginAtZero: true }
+    const response = await fetch('/api/dashboard/harian');
+    const data = await response.json();
+
+    const labels = data.map(item => item.tanggal);
+    const totals = data.map(item => item.total);
+
+    new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: "Total Pendaftaran Harian",
+                    data: totals,
+                    borderWidth: 2,
+                    tension: 0.3
+                }
+            ]
         }
-    }
+    });
 });

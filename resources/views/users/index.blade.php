@@ -8,17 +8,13 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
 
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                <a href="{{ route('users.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition text-center sm:text-left w-full sm:w-auto">+ Tambah User
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <a href="{{ route('users.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                    + Tambah User
                 </a>
-                <form method="GET" action="{{ route('users.index') }}" class="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
-                    <input 
-                    type="text" 
-                    name="search" 
-                    placeholder="Cari User..." 
-                    value="{{ $search }}" 
-                    class="border rounded p-2 w-full sm:w-64 focus:outline-none focus:ring focus:ring-blue-200"
-                    >
+
+                <form method="GET" action="{{ route('users.index') }}" class="flex flex-wrap items-center gap-4">
+                    <input type="text" name="search" placeholder="Cari User..." value="{{ $search }}" class="border rounded p-2 focus:outline-none focus:ring focus:ring-blue-200">
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
                         Cari
                     </button>

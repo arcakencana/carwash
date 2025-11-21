@@ -5,7 +5,7 @@
     </x-slot>
 
 <!-- Konten utama -->
-<div class="relative min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-2">
+<div class="relative flex flex-col items-center py-8 sm:py-4 mt-4">
 
     <div class="w-full sm:max-w-xl lg:max-w-2xl px-4 py-6 bg-white bg-opacity-80 shadow-lg overflow-hidden sm:rounded-lg backdrop-blur-sm">
 
