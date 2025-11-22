@@ -79,10 +79,14 @@
                 </table>
             </div>
 
-            <form id="verifikasiForm" method="POST" action="{{ route('verifikasi.update', encrypt($pendaftaran->id)) }}" class="w-full sm:max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg mt-6">
+            <form id="verifikasiForm" method="POST" action="{{ route('verifikasi.update', encrypt($pendaftaran->id)) }}"
+                class="w-full sm:max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg mt-6">
+
                 @csrf
                 @method('PUT')
 
+                <!-- HIDDEN INPUT -->
+                <input type="hidden" name="pendaftaran_id" value="{{ encrypt($pendaftaran->id) }}" id="pendaftaran_id">
                 <input type="hidden" name="selfie_image" id="selfie_image">
                 <input type="hidden" name="latitude" id="latitude">
                 <input type="hidden" name="longitude" id="longitude">
@@ -98,9 +102,11 @@
                         <button type="button" id="captureBtn" class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
                             📸 Ambil Foto
                         </button>
+
                         <button type="button" id="clearSelfieBtn" class="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
                             Hapus Foto
                         </button>
+
                         <div id="cameraError" class="text-red-600 mt-2 text-center"></div>
                         <div id="locationInfo" class="text-gray-700 mt-2 text-center">📍 Mendapatkan lokasi...</div>
                     </div>
@@ -177,12 +183,61 @@
                     alert('Silahkan ambil foto terlebih dahulu!');
                     return;
                 }
+
+                const now = new Date();
+                const jakartaTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
+                const formatted = jakartaTime.getFullYear() + "-" +
+                String(jakartaTime.getMonth() + 1).padStart(2, '0') + "-" +
+                String(jakartaTime.getDate()).padStart(2, '0') + " " +
+                String(jakartaTime.getHours()).padStart(2, '0') + ":" +
+                String(jakartaTime.getMinutes()).padStart(2, '0') + ":" +
+                String(jakartaTime.getSeconds()).padStart(2, '0');
+
                 document.getElementById('selfie_image').value = selfieImage;
                 document.getElementById('latitude').value = latitude;
                 document.getElementById('longitude').value = longitude;
-                document.getElementById('captured_at').value = new Date().toISOString();
+                document.getElementById('captured_at').value = formatted;
             });
         });
+
+        // submit AJAX
+        document.getElementById("verifikasiForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            let selfie = document.getElementById("selfie_image").value;
+
+            if (!selfie) {
+                showAlert("Apakah sudah mengambil foto?");
+                return;
+            }
+
+            let formData = {
+                pendaftaran_id: document.getElementById("pendaftaran_id").value,
+                selfie_image: selfie,
+                latitude: document.getElementById("latitude").value,
+                longitude: document.getElementById("longitude").value,
+                captured_at: document.getElementById("captured_at").value,
+                _token: "{{ csrf_token() }}",
+                _method: "PUT"
+            };
+
+            $.ajax({
+                url: this.action,
+                method: "POST",
+                data: formData,
+                success: function (res) {
+                    showAlert("Verifikasi berhasil disimpan!");
+
+                setTimeout(() => {
+                    window.location.href = "{{ route('daftar-kegiatan') }}";
+                }, 3000);
+            },
+            error: function () {
+                showAlert("Terjadi kesalahan! Coba lagi.");
+            }
+        });
+        });
+
     </script>
     @endpush
 

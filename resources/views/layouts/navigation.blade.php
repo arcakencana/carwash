@@ -24,9 +24,11 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
+                    @role('daftar-kegiatan')
                     <x-nav-link :href="route('daftar-kegiatan')" :active="request()->routeIs('daftar-kegiatan')">
                         {{ __('Daftar Kegiatan') }}
                     </x-nav-link>
+                    @endrole
 
                     @role('kegiatan')
                     <x-nav-link :href="route('kegiatan.index')" :active="request()->routeIs('kegiatan.*')">
@@ -115,6 +117,12 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @role('daftar-kegiatan')
+            <x-responsive-nav-link :href="route('daftar-kegiatan')" :active="request()->routeIs('daftar-kegiatan.*')">
+                {{ __('Daftar Kegiatan') }}
+            </x-responsive-nav-link>
+            @endrole
 
             @role('kegiatan')
             <x-responsive-nav-link :href="route('kegiatan.index')" :active="request()->routeIs('kegiatan.*')">

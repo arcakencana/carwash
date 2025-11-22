@@ -49,7 +49,7 @@
                                     <span class="text-gray-400">|</span>
                                     @endrole
                                     @role('admin')
-                                    <a href="{{ route('pendaftaran-khusus.create', encrypt($kegiatan->id)) }}" class="text-blue-600 hover:underline">Pendaftaran Khusus</a>
+                                    <a href="{{ route('pendaftaran-khusus.index', encrypt($kegiatan->id)) }}" class="text-blue-600 hover:underline">Pendaftaran Khusus</a>
                                     <span class="text-gray-400">|</span>
                                     @endrole
                                     <a href="{{ route('kegiatan.pdf', encrypt($kegiatan->id)) }}" class="text-blue-600 hover:underline" target="_blank">Cetak</a>

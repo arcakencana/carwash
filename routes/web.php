@@ -10,15 +10,10 @@ Route::get('/register', function () {
     return redirect('/login');
 });
 
-//Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
-
+Route::get('/api/dashboard/harian', [App\Http\Controllers\DashboardController::class, 'grafikHarian'])
+->middleware('auth');
 
 Route::middleware('auth')->group(function () {
-
-    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
-    ->name('dashboard');
-
-    Route::get('/api/dashboard/harian', [App\Http\Controllers\DashboardController::class, 'grafikHarian']);
 
     //profile
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])
@@ -31,9 +26,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-kelurahan/{kecamatan_id}', [App\Http\Controllers\WilayahController::class, 'getKelurahan'])
     ->name('getKelurahan');
 
-    // Route::middleware('role:dashboard')->group(function () {
-    //     //
-    // });
+    Route::middleware('role:dashboard')->group(function () {
+
+        Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
+        ->name('dashboard');
+
+    });
 
     Route::middleware('role:daftar-kegiatan')->group(function () {
 
@@ -58,12 +56,26 @@ Route::middleware('auth')->group(function () {
         Route::get('/pendaftaran/download/{id}', [App\Http\Controllers\PendaftaranController::class, 'download'])
         ->name('pendaftaran.download');
 
-        Route::get('/pendaftaran-khusus/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'create'])
+    });
+
+    Route::middleware('role:pendaftaran-khusus')->group(function () {
+
+        Route::get('/pendaftaran-khusus/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'index'])
+        ->name('pendaftaran-khusus.index');
+        Route::get('/pendaftaran-khusus/create/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'create'])
         ->name('pendaftaran-khusus.create');
         Route::post('/pendaftaran-khusus/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'store'])
         ->name('pendaftaran-khusus.store');
-
-
+        Route::get('/pendaftaran-khusus/show/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'show'])
+        ->name('pendaftaran-khusus.show');
+        Route::get('/pendaftaran-khusus/edit/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'edit'])
+        ->name('pendaftaran-khusus.edit');
+        Route::put('/pendaftaran-khusus/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'update'])
+        ->name('pendaftaran-khusus.update');
+        Route::delete('/pendaftaran-khusus', [App\Http\Controllers\PendaftaranKhususController::class, 'destroy'])
+        ->name('pendaftaran-khusus.destroy');
+        Route::get('/pendaftaran-khusus/download/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'download'])
+        ->name('pendaftaran-khusus.download');
 
     });
 

@@ -1,4 +1,5 @@
 import './bootstrap';
+import './dashboardChart';
 
 import Alpine from 'alpinejs';
 

@@ -65,7 +65,8 @@
         </div>
     </div>
 
-
-    @vite(['resources/js/dashboardChart.js'])
+    <script>
+        window.API_URL = "{{ url('/api/dashboard/harian') }}";
+    </script>
     
 </x-app-layout>

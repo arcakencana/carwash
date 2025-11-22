@@ -1,27 +1,31 @@
 import Chart from "chart.js/auto";
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const ctx = document.getElementById("pendaftaranChart");
-    if (!ctx) return;
+    const canvas = document.getElementById("pendaftaranChart");
+    if (!canvas) return;
 
-    const response = await fetch('/api/dashboard/harian');
-    const data = await response.json();
+    try {
+        const response = await fetch(window.API_URL);
+        const data = await response.json();
 
-    const labels = data.map(item => item.tanggal);
-    const totals = data.map(item => item.total);
+        const labels = data.map(item => item.tanggal);
+        const totals = data.map(item => item.total);
 
-    new Chart(ctx, {
-        type: "line",
-        data: {
-            labels: labels,
-            datasets: [
-                {
+        new Chart(canvas.getContext("2d"), {
+            type: "line",
+            data: {
+                labels,
+                datasets: [{
                     label: "Total Pendaftaran Harian",
                     data: totals,
                     borderWidth: 2,
+                    borderColor: "blue", // opsional
                     tension: 0.3
-                }
-            ]
-        }
-    });
+                }]
+            }
+        });
+
+    } catch (err) {
+        console.error("Gagal load chart:", err);
+    }
 });

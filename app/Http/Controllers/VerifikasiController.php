@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pendaftaran;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class VerifikasiController extends Controller
@@ -11,7 +12,8 @@ class VerifikasiController extends Controller
     {
         $id = decrypt($id);
 
-        $data['pendaftaran'] = Pendaftaran::join('kelurahans', 'pendaftarans.kelurahan_id', '=', 'kelurahans.id')
+        $data['pendaftaran'] = Pendaftaran::select('pendaftarans.id', 'kk', 'ktp', 'nama', 'alamat', 'whatsapp', 'antrian', 'name')
+        ->join('kelurahans', 'pendaftarans.kelurahan_id', '=', 'kelurahans.id')
         ->where('pendaftarans.id', $id)->first();
 
         return view('verifikasi.show', $data);
@@ -45,49 +47,46 @@ class VerifikasiController extends Controller
 
     public function update(Request $request, $id)
     {
-        $id = decrypt($id);
-        dd($request);
         $request->validate([
-            'kegiatan_id' => 'required',
-            'kk' => 'required|integer',
-            'ktp' => 'required|integer',
-            'nama' => 'required',
-            'alamat' => 'required',
-            'whatsapp' => 'required|min:9',
+            'pendaftaran_id' => 'required',
+            'selfie_image' => 'required',
+            'latitude' => 'required',
+            'longitude' => 'required',
+            'captured_at' => 'required',
         ]);
 
-        $kk = $request->kk;
-        $ktp = $request->ktp;
+        $id = decrypt($request->pendaftaran_id);
 
-        // Query cek apakah sudah ada
-        $exists = Pendaftaran::where(function ($q) use ($kk, $ktp) {
-            $q->where('kk', $kk)
-            ->orWhere('ktp', $ktp);
-        })
-        ->when($id, fn ($q) => $q->where('id', '!=', $id))
-        ->exists();
+        $image = $request->selfie_image;
 
+        // Pisahkan metadata base64
+        list($type, $imageData) = explode(';', $image);
+        list(, $imageData) = explode(',', $imageData);
 
-        // Jika sudah ada -> fail
-        if ($exists) {
+        // Decode base64
+        $imageData = base64_decode($imageData);
 
-            return back()->with('error', 'Data pendaftaran sudah');
+        // Nama file
+        $fotoName = time() . '_' . uniqid() . '.jpg';
 
-        } else {
+        // Simpan ke storage
+        $path = storage_path('app/public/foto_verifikasi/' . $fotoName);
+        file_put_contents($path, $imageData);
 
-            $data = Pendaftaran::where('id', $id)
-            ->update([
-                'kk' => $request->kk,
-                'ktp' => $request->ktp,
-                'nama' => $request->nama,
-                'whatsapp' => $request->whatsapp,
-                'alamat' => $request->alamat,
-            ]);
+        $publicPath = 'storage/foto_verifikasi/' . $fotoName;
 
+        $updated = Pendaftaran::where('id', $id)->update([
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'captured_at' => Carbon::parse($request->captured_at)->format('Y-m-d H:i:s'),
+            'photo_path' => $publicPath,
+        ]);
 
-            return redirect()->route('pendaftaran.index', $request->kegiatan_id)->with('success', 'Data berhasil update!');
+        return response()->json([
+            'success' => $updated,
+            'updated' => $updated,
+        ]);
 
-        }
     }
 
 }
