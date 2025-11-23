@@ -224,6 +224,40 @@ class PendaftaranController extends Controller
         }
     }
 
+    public function laporan($id)
+    {
+        $id = decrypt($id);
+
+        $kelurahan_id = Auth::user()->kelurahan_id;
+
+        $laporan = Pendaftaran::select(
+            'pendaftarans.id as pendaftaran_id',
+            'pendaftarans.kk',
+            'pendaftarans.ktp',
+            'pendaftarans.nama',
+            'pendaftarans.alamat',
+            'pendaftarans.whatsapp',
+            'pendaftarans.antrian',
+            'pendaftarans.created_at as tanggal_pendaftaran',
+            'kegiatans.nama_kegiatan',
+            'kegiatans.tanggal_kegiatan',
+            'kecamatans.name as nama_kecamatan',
+            'kelurahans.name as nama_kelurahan',
+        )
+        ->join('kecamatans', 'pendaftarans.kecamatan_id', '=', 'kecamatans.id')
+        ->join('kelurahans', 'pendaftarans.kelurahan_id', '=', 'kelurahans.id')
+        ->join('kegiatans', 'pendaftarans.kegiatan_id', '=', 'kegiatans.id')
+        ->where('pendaftarans.kegiatan_id', $id)
+        ->where('pendaftarans.kelurahan_id', $kelurahan_id)
+        ->orderBy('pendaftarans.antrian', 'ASC')
+        ->get();
+
+        $pdf = Pdf::loadView('pendaftaran.laporan', compact('laporan'));
+
+        return $pdf->download($kelurahan_id . '.pdf');
+
+    }
+
     public function download($id)
     {
         $id = decrypt($id);

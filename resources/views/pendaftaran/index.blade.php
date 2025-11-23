@@ -1,7 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-900 leading-tight">
-            <h2 class="font-semibold text-gray-800 leading-tight">{{ $label }}</h2>
+            <h2 class="font-semibold text-gray-800 leading-tight">{{ $label }}
+                <a href="{{ url('/pendaftaran/laporan', ['id' => encrypt($id_kegiatan)]) }}" class="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition" target="_blank">
+                    Laporan
+                </a>
+            </h2>
         </h2>
     </x-slot>
 

@@ -55,6 +55,7 @@ Route::middleware('auth')->group(function () {
         ->name('pendaftaran.destroy');
         Route::get('/pendaftaran/download/{id}', [App\Http\Controllers\PendaftaranController::class, 'download'])
         ->name('pendaftaran.download');
+        Route::get('/pendaftaran/laporan/{id}', [App\Http\Controllers\PendaftaranController::class, 'laporan']);
 
     });
 
