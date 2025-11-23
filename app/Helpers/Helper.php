@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Models\kelurahan;
+use App\Models\Kelurahan;
 use App\Models\Kuota;
 use App\Models\Pendaftaran;
 

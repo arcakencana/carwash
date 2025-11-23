@@ -138,9 +138,23 @@
 
             // akses kamera
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ video: true })
-                .then(stream => { video.srcObject = stream; })
-                .catch(err => { cameraError.textContent = "Tidak dapat mengakses kamera"; });
+                navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: "environment" } }
+                })
+                .then(stream => {
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    console.warn("Gagal kamera belakang, coba depan...", err);
+
+                    navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: "user" }
+                    })
+                    .then(stream => { video.srcObject = stream; })
+                    .catch(err => {
+                        cameraError.textContent = "Tidak dapat mengakses kamera";
+                    });
+                });
             } else {
                 cameraError.textContent = "Browser tidak mendukung kamera";
             }
@@ -201,44 +215,44 @@
         });
 
         // submit AJAX
-        document.getElementById("verifikasiForm").addEventListener("submit", function (e) {
-            e.preventDefault();
+document.getElementById("verifikasiForm").addEventListener("submit", function (e) {
+    e.preventDefault();
 
-            let selfie = document.getElementById("selfie_image").value;
+    let selfie = document.getElementById("selfie_image").value;
 
-            if (!selfie) {
-                showAlert("Apakah sudah mengambil foto?");
-                return;
-            }
+    if (!selfie) {
+        showAlert("Apakah sudah mengambil foto?");
+        return;
+    }
 
-            let formData = {
-                pendaftaran_id: document.getElementById("pendaftaran_id").value,
-                selfie_image: selfie,
-                latitude: document.getElementById("latitude").value,
-                longitude: document.getElementById("longitude").value,
-                captured_at: document.getElementById("captured_at").value,
-                _token: "{{ csrf_token() }}",
-                _method: "PUT"
-            };
+    let formData = {
+        pendaftaran_id: document.getElementById("pendaftaran_id").value,
+        selfie_image: selfie,
+        latitude: document.getElementById("latitude").value,
+        longitude: document.getElementById("longitude").value,
+        captured_at: document.getElementById("captured_at").value,
+        _token: "{{ csrf_token() }}",
+        _method: "PUT"
+    };
 
-            $.ajax({
-                url: this.action,
-                method: "POST",
-                data: formData,
-                success: function (res) {
-                    showAlert("Verifikasi berhasil disimpan!");
+    $.ajax({
+        url: this.action,
+        method: "POST",
+        data: formData,
+        success: function (res) {
+            showAlert("Verifikasi berhasil disimpan!");
 
-                setTimeout(() => {
-                    window.location.href = "{{ route('daftar-kegiatan') }}";
-                }, 3000);
-            },
-            error: function () {
-                showAlert("Terjadi kesalahan! Coba lagi.");
-            }
-        });
-        });
+            setTimeout(() => {
+                window.location.href = "{{ route('daftar-kegiatan') }}";
+            }, 3000);
+        },
+        error: function () {
+            showAlert("Terjadi kesalahan! Coba lagi.");
+        }
+    });
+});
 
-    </script>
-    @endpush
+</script>
+@endpush
 
 </x-app-layout>

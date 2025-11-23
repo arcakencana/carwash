@@ -13,6 +13,9 @@ Route::get('/register', function () {
 Route::get('/api/dashboard/harian', [App\Http\Controllers\DashboardController::class, 'grafikHarian'])
 ->middleware('auth');
 
+Route::get('/pendaftaran/download/{id}', [App\Http\Controllers\PendaftaranController::class, 'download'])
+->name('pendaftaran.download');
+
 Route::middleware('auth')->group(function () {
 
     //profile
@@ -53,8 +56,6 @@ Route::middleware('auth')->group(function () {
         ->name('pendaftaran.update');
         Route::delete('/pendaftaran', [App\Http\Controllers\PendaftaranController::class, 'destroy'])
         ->name('pendaftaran.destroy');
-        Route::get('/pendaftaran/download/{id}', [App\Http\Controllers\PendaftaranController::class, 'download'])
-        ->name('pendaftaran.download');
         Route::get('/pendaftaran/laporan/{id}', [App\Http\Controllers\PendaftaranController::class, 'laporan']);
 
     });
