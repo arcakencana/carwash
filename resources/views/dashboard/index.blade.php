@@ -44,17 +44,6 @@
                     </div>
                 </div>
 
-                <!-- Total User -->
-                <div class="flex items-center p-5 bg-red-500 text-white rounded-xl shadow-md">
-                    <div class="text-4xl opacity-80">
-                        👤
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm uppercase font-semibold opacity-90">Total User</p>
-                        <h3 class="text-3xl font-bold">{{ $total_user }}</h3>
-                    </div>
-                </div>
-
             </div>
 
             <div class="mt-8 bg-white p-6 rounded-xl shadow">
