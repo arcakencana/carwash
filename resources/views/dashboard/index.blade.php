@@ -2,7 +2,7 @@
 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-900 leading-tight">
-            {{ __('Dashboard') }}
+            Dashboard
         </h2>
     </x-slot>
 
@@ -10,6 +10,17 @@
         <div class="max-w-7xl mx-auto px-4">
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                <!-- Total Kuota -->
+                <div class="flex items-center p-5 bg-red-500 text-white rounded-xl shadow-md">
+                    <div class="text-4xl opacity-80">
+                        👤
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm uppercase font-semibold opacity-90">Kuota {{ $nama }}</p>
+                        <h3 class="text-3xl font-bold">{{ $kuota }}</h3>
+                    </div>
+                </div>
 
                 <!-- Total Pendaftaran -->
                 <div class="flex items-center p-5 bg-blue-500 text-white rounded-xl shadow-md">
@@ -57,5 +68,5 @@
     <script>
         window.API_URL = "{{ url('/api/dashboard/harian') }}";
     </script>
-    
+
 </x-app-layout>

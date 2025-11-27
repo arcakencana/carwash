@@ -109,36 +109,54 @@ class PendaftaranController extends Controller
         } else {
 
             $kelurahan_id = Auth::user()->kelurahan_id;
-            $kecamatan = Helper::getKecamatanByKelurahan($kelurahan_id);
-            $nextNomorUrut = Helper::getNextNomorUrutKelurahan($id, $kelurahan_id);
 
-            $data = Pendaftaran::create([
-                'kk' => $request->kk,
-                'ktp' => $request->ktp,
-                'nama' => $request->nama,
-                'whatsapp' => $request->whatsapp,
-                'alamat' => $request->alamat,
-                'lansia_disabilitas' => 'tidak',
-                'antrian' => $nextNomorUrut,
-                'kecamatan_id' => $kecamatan->id,
-                'kelurahan_id' => $kelurahan_id,
-                'kegiatan_id' => $id,
-            ]);
+            $totalPendaftaran = Pendaftaran::where('kelurahan_id', $kelurahan_id)
+            ->count();
 
-            $nama = $request->nama;
-            $noAntrian = $nextNomorUrut;
-            $phone = '62' . substr($request->whatsapp, 1);
-            $link = route('pendaftaran.download', encrypt($data->id));
+            $kuota = Helper::getKuotaKelurahan($id, $kelurahan_id);
 
-            $message = "*Halo $nama,* Pendaftaran kamu berhasil ✅ Nomor Antrian: *$noAntrian* \nSilakan download bukti pendaftaran melalui link berikut: \n $link";
+            if ($totalPendaftaran >= $kuota->jumlah) {
 
-            WhatsappHelper::sendMessage($phone, $message);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pendaftaran gagal karena Kuota Habis.',
+                    'errors' => '',
+                ], 409);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil disimpan, silahkan menunggu notifikasi undangan pengambilan paket subsidi melalui nomor whatsapp yang telah anda daftarkan atau download bukti pendaftaran di bawah ini.',
-                'data' => route('pendaftaran.download', encrypt($data->id)),
-            ]);
+            } else {
+
+                $kecamatan = Helper::getKecamatanByKelurahan($kelurahan_id);
+                $nextNomorUrut = Helper::getNextNomorUrutKelurahan($id, $kelurahan_id);
+
+                $data = Pendaftaran::create([
+                    'kk' => $request->kk,
+                    'ktp' => $request->ktp,
+                    'nama' => $request->nama,
+                    'whatsapp' => $request->whatsapp,
+                    'alamat' => $request->alamat,
+                    'lansia_disabilitas' => 'tidak',
+                    'antrian' => $nextNomorUrut,
+                    'kecamatan_id' => $kecamatan->id,
+                    'kelurahan_id' => $kelurahan_id,
+                    'kegiatan_id' => $id,
+                ]);
+
+                $nama = $request->nama;
+                $noAntrian = $nextNomorUrut;
+                $phone = '62' . substr($request->whatsapp, 1);
+                $link = route('pendaftaran.download', encrypt($data->id));
+
+                $message = "*Halo $nama,* Pendaftaran kamu berhasil ✅ Nomor Antrian: *$noAntrian* \nSilakan download bukti pendaftaran melalui link berikut: \n $link";
+
+                WhatsappHelper::sendMessage($phone, $message);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data berhasil disimpan, silahkan menunggu notifikasi undangan pengambilan paket subsidi melalui nomor whatsapp yang telah anda daftarkan atau download bukti pendaftaran di bawah ini.',
+                    'data' => route('pendaftaran.download', encrypt($data->id)),
+                ]);
+
+            }
 
         }
 

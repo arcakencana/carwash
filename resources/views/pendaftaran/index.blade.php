@@ -65,6 +65,13 @@
                                     {{ \Carbon\Carbon::parse($value->created_at)->format('d-m-Y H:i:s') }}
                                 </td>
                                 <td class="py-2 px-4 text-center">
+                                    @if($value->photo_path == null)
+                                    <a href="{{ route('verifikasi.show', encrypt($value->id)) }}" class="text-blue-600 hover:underline" target="_blank">Verifikasi</a>
+                                    <span class="text-gray-400">|</span>
+                                    @else
+                                    <a href="{{ route('verifikasi.show.operator', encrypt($value->id)) }}" class="text-blue-600 hover:underline" target="_blank">Lihat</a>
+                                    <span class="text-gray-400">|</span>
+                                    @endif
                                     <a href="" class="text-blue-600 hover:underline">Kirim</a>
                                     <span class="text-gray-400">|</span>
                                     <a href="{{ route('pendaftaran.download', encrypt($value->id)) }}" class="text-blue-600 hover:underline" target="_blank">Download</a>

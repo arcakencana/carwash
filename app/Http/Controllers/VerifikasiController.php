@@ -89,4 +89,33 @@ class VerifikasiController extends Controller
 
     }
 
+    public function showVerifikasi($id)
+    {
+        $id = decrypt($id);
+
+        $data['pendaftaran'] = Pendaftaran::select(
+            'pendaftarans.id as pendaftaran_id',
+            'pendaftarans.kk',
+            'pendaftarans.ktp',
+            'pendaftarans.nama',
+            'pendaftarans.alamat',
+            'pendaftarans.whatsapp',
+            'pendaftarans.lansia_disabilitas',
+            'pendaftarans.antrian',
+            'pendaftarans.latitude',
+            'pendaftarans.longitude',
+            'pendaftarans.captured_at',
+            'pendaftarans.photo_path',
+            'kegiatans.nama_kegiatan',
+            'kecamatans.name as nama_kecamatan',
+            'kelurahans.name as nama_kelurahan'
+        )
+        ->join('kegiatans', 'pendaftarans.kegiatan_id', '=', 'kegiatans.id')
+        ->join('kelurahans', 'pendaftarans.kelurahan_id', '=', 'kelurahans.id')
+        ->join('kecamatans', 'pendaftarans.kecamatan_id', '=', 'kecamatans.id')
+        ->where('pendaftarans.id', $id)->first();
+
+        return view('pendaftaran-khusus.show', $data);
+    }
+
 }

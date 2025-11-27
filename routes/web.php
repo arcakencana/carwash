@@ -89,6 +89,9 @@ Route::middleware('auth')->group(function () {
         Route::put('/verifikasi/{id}', [App\Http\Controllers\VerifikasiController::class, 'update'])
         ->name('verifikasi.update');
 
+        Route::get('/verifikasi/show/{id}', [App\Http\Controllers\VerifikasiController::class, 'showVerifikasi'])
+        ->name('verifikasi.show.operator');
+
     });
 
     Route::middleware('role:kegiatan')->group(function () {
