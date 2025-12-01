@@ -88,4 +88,21 @@ class DashboardController extends Controller
 
     }
 
+    public function grafikKelurahan()
+    {
+        $data = DB::table('kelurahans')
+        ->leftJoin('pendaftarans', 'pendaftarans.kelurahan_id', '=', 'kelurahans.id')
+        ->leftJoin('kuotas', 'kuotas.kelurahan_id', '=', 'kelurahans.id')
+        ->select(
+            'kelurahans.name as kelurahan',
+            DB::raw('COUNT(pendaftarans.id) as total_pendaftaran'),
+            DB::raw('COALESCE(kuotas.jumlah, 0) as kuota')
+        )
+        ->groupBy('kelurahans.id', 'kelurahans.name', 'kuotas.jumlah')
+        ->orderBy('kelurahans.name')
+        ->get();
+
+        return response()->json($data);
+    }
+
 }

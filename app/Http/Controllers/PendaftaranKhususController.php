@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\WhatsappHelper;
 use App\Models\Kecamatan;
 use App\Models\Kegiatan;
+use App\Models\Kelurahan;
 use App\Models\Pendaftaran;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -16,6 +17,9 @@ class PendaftaranKhususController extends Controller
         $id_kegiatan = decrypt($id);
 
         $search = $request->input('search');
+        $kelurahan_id = $request->input('kelurahan_id');
+
+        $kelurahans = Kelurahan::all();
 
         $query = Pendaftaran::query();
         $query->select(
@@ -38,14 +42,19 @@ class PendaftaranKhususController extends Controller
             ->orWhere('nama', 'like', "%{$search}%");
         }
 
+        if ($kelurahan_id) {
+            $query->where('pendaftarans.kelurahan_id', $kelurahan_id);
+        }
+
+
         $query->where(['kegiatan_id' => $id_kegiatan,]);
 
         $query->orderBy('pendaftarans.id', 'DESC');
 
         $pendaftarans = $query->latest()->paginate(10);
-        $pendaftarans->appends(['search' => $search]);
+        $pendaftarans->appends(['search' => $search, 'kelurahan_id' => $kelurahan_id]);
 
-        return view('pendaftaran-khusus.index', compact('pendaftarans', 'search', 'id_kegiatan'));
+        return view('pendaftaran-khusus.index', compact('pendaftarans', 'search', 'id_kegiatan', 'kelurahans', 'kelurahan_id'));
     }
 
     public function create($id)

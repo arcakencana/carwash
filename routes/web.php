@@ -13,6 +13,9 @@ Route::get('/register', function () {
 Route::get('/api/dashboard/harian', [App\Http\Controllers\DashboardController::class, 'grafikHarian'])
 ->middleware('auth');
 
+Route::get('/api/dashboard/grafik-kelurahan', [App\Http\Controllers\DashboardController::class, 'grafikKelurahan'])
+->middleware('auth');
+
 Route::get('/pendaftaran/download/{id}', [App\Http\Controllers\PendaftaranController::class, 'download'])
 ->name('pendaftaran.download');
 

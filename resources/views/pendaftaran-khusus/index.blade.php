@@ -15,6 +15,16 @@
 
                 <form method="GET" action="" class="flex flex-wrap items-center gap-4">
                     <input type="text" name="search" placeholder="Cari..." value="{{ $search }}" class="border rounded p-2 focus:outline-none focus:ring focus:ring-blue-200">
+
+                    <select name="kelurahan_id" class="border rounded p-2 focus:outline-none focus:ring focus:ring-blue-200">
+                        <option value="">-- Semua Kelurahan --</option>
+                        @foreach($kelurahans as $kel)
+                        <option value="{{ $kel->id }}" {{ $kel->id == $kelurahan_id ? 'selected' : '' }}>
+                            {{ $kel->name }}
+                        </option>
+                        @endforeach
+                    </select>
+                    
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
                         Cari
                     </button>
