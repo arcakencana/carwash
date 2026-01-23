@@ -14,6 +14,13 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        dd(
+            auth()->check(),
+            auth()->user()?->id,
+            auth()->user()?->getRoleNames(),
+            auth()->user()?->roles
+        );
+        
         if (Auth::user()->kelurahan_id == 0) {
 
             $kegiatan = Kegiatan::first();

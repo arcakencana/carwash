@@ -25,34 +25,8 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // Validate Captcha
-        $request->validate([
-            'cf-turnstile-response' => 'required',
-        ]);
-
-        $turnstileSecret = config('services.turnstile.secret');
-
-        $verify = Http::asForm()->post(
-            'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-            [
-                'secret' => $turnstileSecret,
-                'response' => $request->input('cf-turnstile-response'),
-                'remoteip' => $request->ip(),
-            ]
-        );
-
-        $verifyBody = $verify->json();
-
-        if (!($verifyBody['success'] ?? false)) {
-            return back()
-            ->withErrors(['email' => 'Verifikasi Captcha gagal.'])
-            ->withInput();
-        }
-
         $request->authenticate();
-
         $request->session()->regenerate();
-
         return redirect()->intended(route('dashboard'));
     }
 
@@ -62,11 +36,8 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
-
         return redirect('/');
     }
 
