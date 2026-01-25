@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
 
-    <title>Dinas Perindustrian dan Perdagangan Kota Batam</title>
+    <title>{{ env("APP_NAME") }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">

@@ -10,18 +10,11 @@ Route::get('/register', function () {
     return redirect('/login');
 });
 
-Route::get('/api/dashboard/harian', [App\Http\Controllers\DashboardController::class, 'grafikHarian'])
-->middleware('auth');
-
-Route::get('/api/dashboard/grafik-kelurahan', [App\Http\Controllers\DashboardController::class, 'grafikKelurahan'])
-->middleware('auth');
-
-Route::get('/pendaftaran/download/{id}', [App\Http\Controllers\PendaftaranController::class, 'download'])
-->name('pendaftaran.download');
-
 Route::middleware('auth')->group(function () {
 
-    //profile
+    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
+    ->name('dashboard');
+
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])
     ->name('profile.edit');
     Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])
@@ -29,24 +22,21 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [App\Http\Controllers\ProfileController::class, 'destroy'])
     ->name('profile.destroy');
 
-    Route::get('/get-kelurahan/{kecamatan_id}', [App\Http\Controllers\WilayahController::class, 'getKelurahan'])
-    ->name('getKelurahan');
+    Route::middleware(['role:user'])->group(function () {
 
-    Route::middleware('role:dashboard')->group(function () {
-
-        Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
-        ->name('dashboard');
+        Route::resource('transaksi', App\Http\Controllers\TransaksiController::class);
 
     });
 
-    Route::middleware('role:daftar-kegiatan')->group(function () {
+    Route::middleware(['role:kasir'])->group(function () {
 
-        Route::get('/daftar-kegiatan', [App\Http\Controllers\DaftarKegiatanController::class, 'index'])
-        ->name('daftar-kegiatan');
+        Route::resource('data-transaksi', App\Http\Controllers\DataTransaksiController::class);
 
     });
 
-    Route::middleware('role:pendaftaran')->group(function () {
+    Route::middleware(['role:admin'])->group(function () {
+
+        Route::resource('master-barang', App\Http\Controllers\MasterBarangController::class);
 
         Route::get('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::class, 'index'])
         ->name('pendaftaran.index');
@@ -62,67 +52,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/pendaftaran/laporan/{id}', [App\Http\Controllers\PendaftaranController::class, 'laporan']);
 
     });
-
-    Route::middleware('role:pendaftaran-khusus')->group(function () {
-
-        Route::get('/pendaftaran-khusus/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'index'])
-        ->name('pendaftaran-khusus.index');
-        Route::get('/pendaftaran-khusus/create/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'create'])
-        ->name('pendaftaran-khusus.create');
-        Route::post('/pendaftaran-khusus/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'store'])
-        ->name('pendaftaran-khusus.store');
-        Route::get('/pendaftaran-khusus/show/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'show'])
-        ->name('pendaftaran-khusus.show');
-        Route::get('/pendaftaran-khusus/edit/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'edit'])
-        ->name('pendaftaran-khusus.edit');
-        Route::put('/pendaftaran-khusus/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'update'])
-        ->name('pendaftaran-khusus.update');
-        Route::delete('/pendaftaran-khusus', [App\Http\Controllers\PendaftaranKhususController::class, 'destroy'])
-        ->name('pendaftaran-khusus.destroy');
-        Route::get('/pendaftaran-khusus/download/{id}', [App\Http\Controllers\PendaftaranKhususController::class, 'download'])
-        ->name('pendaftaran-khusus.download');
-
-    });
-
-    Route::middleware('role:verifikasi')->group(function () {
-
-        Route::get('/verifikasi/{id}', [App\Http\Controllers\VerifikasiController::class, 'show'])
-        ->name('verifikasi.show');
-
-        Route::put('/verifikasi/{id}', [App\Http\Controllers\VerifikasiController::class, 'update'])
-        ->name('verifikasi.update');
-
-        Route::get('/verifikasi/show/{id}', [App\Http\Controllers\VerifikasiController::class, 'showVerifikasi'])
-        ->name('verifikasi.show.operator');
-
-    });
-
-    Route::middleware('role:kegiatan')->group(function () {
-
-        Route::resource('kegiatan', App\Http\Controllers\KegiatanController::class);
-        Route::get('/kegiatan/kuota/{id}', [App\Http\Controllers\KegiatanController::class, 'kuota'])
-        ->name('kegiatan.kuota');
-        Route::put('/kegiatan/kuota/update-massal', [App\Http\Controllers\KegiatanController::class, 'kuotaUpdateMassal'])
-        ->name('kuota.updateMassal');
-        Route::get('/kegiatan/pdf/{id}', [App\Http\Controllers\KegiatanController::class, 'exportPdf'])
-        ->name('kegiatan.pdf');
-
-    });
-
-    Route::middleware('role:admin')->group(function () {
-
-        //user
-        Route::resource('users', App\Http\Controllers\UserController::class);
-        Route::resource('roles', App\Http\Controllers\RoleController::class);
-
-        // Assign Role
-        Route::get('/users/{user}/assign-role', [App\Http\Controllers\UserController::class, 'assignRole'])
-        ->name('users.assignRole');
-        Route::post('/users/{user}/assign-role', [App\Http\Controllers\UserController::class, 'storeAssignedRole'])
-        ->name('users.storeAssignedRole');
-
-    });
-
 
 });
 

@@ -33,10 +33,8 @@ return Application::configure(basePath: dirname(__DIR__))
     'convert.empty.strings' => \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     'prevent.requests.during.maintenance' => \Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance::class,
 
-        // 🧑‍💼 Spatie Role & Permission
-    'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
-    'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-    'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+    'role' => \App\Http\Middleware\RoleMiddleware::class,
+
 ]);
 })
 ->withExceptions(function (Exceptions $exceptions): void {

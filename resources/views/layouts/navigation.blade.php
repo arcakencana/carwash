@@ -11,9 +11,9 @@
                 </div> --}}
 
                 <div class="flex items-center space-x-3">
-                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-3">
+                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-4">
                         <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-10 w-auto">
-                        <span class="text-xl font-bold text-gray-800 dark:text-gray-100">SITEBUS MURAH</span>
+                        <span class="text-xl font-bold text-gray-800 dark:text-gray-100">{{ env("APP_NAME") }}</span>
                     </a>
                 </div>
 
@@ -24,19 +24,19 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    @role('daftar-kegiatan')
-                    <x-nav-link :href="route('daftar-kegiatan')" :active="request()->routeIs('daftar-kegiatan')">
-                        {{ __('Daftar Kegiatan') }}
+                    @if(auth()->check() && auth()->user()->role === 'user')
+                    <x-nav-link :href="route('transaksi.index')" :active="request()->routeIs('transaksi')">
+                        {{ __('Transaksi') }}
                     </x-nav-link>
-                    @endrole
+                    @endif
 
-                    @role('kegiatan')
-                    <x-nav-link :href="route('kegiatan.index')" :active="request()->routeIs('kegiatan.*')">
-                        {{ __('Kegiatan') }}
+                    @if(auth()->check() && auth()->user()->role === 'kasir')
+                    <x-nav-link :href="route('data-transaksi.index')" :active="request()->routeIs('data-transaksi')">
+                        {{ __('Data Transaksi') }}
                     </x-nav-link>
-                    @endrole
+                    @endif
 
-                    @role('admin')
+                    @if(auth()->check() && auth()->user()->role === 'admin')
                     <div x-data="{ open: false }" class="relative flex items-center">
 
                         <!-- Tombol utama mengikuti style x-nav-link -->
@@ -51,16 +51,16 @@
 
                         <!-- Dropdown -->
                         <div x-show="open" @click.outside="open = false" class="absolute left-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-2 mt-5 z-50">
-                            <a href="{{ route('users.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                Manajemen User
+                            <a href="{{ route('master-barang.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                Master Barang
                             </a>
 
-                            <a href="{{ route('roles.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                Manajemen Role
+                            <a href="" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                User
                             </a>
                         </div>
                     </div>
-                    @endrole
+                    @endif
 
                 </div>
 
@@ -119,13 +119,13 @@
             </x-responsive-nav-link>
 
             @role('daftar-kegiatan')
-            <x-responsive-nav-link :href="route('daftar-kegiatan')" :active="request()->routeIs('daftar-kegiatan.*')">
+            <x-responsive-nav-link>
                 {{ __('Daftar Kegiatan') }}
             </x-responsive-nav-link>
             @endrole
 
             @role('kegiatan')
-            <x-responsive-nav-link :href="route('kegiatan.index')" :active="request()->routeIs('kegiatan.*')">
+            <x-responsive-nav-link>
                 {{ __('Kegiatan') }}
             </x-responsive-nav-link>
             @endrole
@@ -142,11 +142,11 @@
                 </button>
 
                 <div x-show="openAdminMobile" class="ms-4 mt-1 space-y-1">
-                    <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                    <x-responsive-nav-link>
                         {{ __('Manajemen User') }}
                     </x-responsive-nav-link>
 
-                    <x-responsive-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
+                    <x-responsive-nav-link>
                         {{ __('Manajemen Role') }}
                     </x-responsive-nav-link>
                 </div>
