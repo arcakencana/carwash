@@ -7,7 +7,7 @@
 
     <div class="py-6 max-w-5xl mx-auto">
         <div class="bg-white p-6 rounded shadow">
-            <form action="{{ route('transaksi.store') }}" method="POST">
+            <form action="{{ route('data-transaksi.store') }}" method="POST">
                 @csrf
 
                 <!-- User -->
@@ -77,7 +77,7 @@
 
             <div class="flex justify-end gap-3 mt-4">
                 <!-- Tombol Kembali -->
-                <a href="{{ route('transaksi.index') }}"
+                <a href="{{ route('data-transaksi.index') }}"
                 class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors">
                 Kembali
             </a>
@@ -132,6 +132,20 @@
     });
 
 // hitung harga & subtotal
+    function hitung() {
+        document.querySelectorAll('#items tr').forEach(row => {
+            const barang = row.querySelector('.barang');
+            const qty = row.querySelector('.qty');
+            const harga = barang.selectedOptions[0].dataset.harga || 0;
+
+            row.querySelector('.harga').innerText = harga;
+            row.querySelector('.subtotal').innerText = harga * qty.value;
+        });
+    }
+
+    document.addEventListener('change', hitung);
+    document.addEventListener('keyup', hitung);
+
     function hitung() {
         document.querySelectorAll('#items tr').forEach(row => {
             const barang = row.querySelector('.barang');

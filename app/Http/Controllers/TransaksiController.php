@@ -15,6 +15,7 @@ class TransaksiController extends Controller
     public function index()
     {
         $transaksis = Transaksi::with('kasir')
+        ->where('user_id', Auth::id())
         ->orderBy('created_at', 'desc')
         ->paginate(10);
 
@@ -95,23 +96,7 @@ class TransaksiController extends Controller
 
         public function destroy(MasterBarang $masterBarang)
         {
-            try {
-
-                $masterBarang->delete();
-
-                return redirect()
-                ->route('master-barang.index')
-                ->with('success', 'Master Barang berhasil dihapus!');
-
-            } catch (\Exception $e) {
-
-            // Bisa tulis log jika ingin debug
-                \Log::error('Gagal menghapus master barang: ' . $e->getMessage());
-
-                return redirect()
-                ->route('master-barang.index')
-                ->with('error', 'Gagal menghapus master barang! Silakan coba lagi.');
-            }
+            //
         }
 
     }

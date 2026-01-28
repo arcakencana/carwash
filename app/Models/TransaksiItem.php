@@ -9,6 +9,7 @@ class TransaksiItem extends Model
     protected $guard_name = 'web';
     protected $table = 'transaksi_items';
     protected $fillable = [
+        'id',
         'transaksi_id',
         'master_barang_id',
         'qty',
@@ -18,7 +19,7 @@ class TransaksiItem extends Model
 
     public function transaksi()
     {
-        return $this->belongsTo(Transaksi::class);
+        return $this->belongsTo(Transaksi::class, 'transaksi_id', 'id');
     }
 
     public function barang()

@@ -10,7 +10,7 @@
 
             <!-- Tombol tambah transaksi -->
             <div class="mb-4 flex flex-col sm:flex-row sm:justify-end gap-2">
-                <a href="{{ route('transaksi.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition-colors text-center">
+                <a href="{{ route('data-transaksi.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition-colors text-center">
                     + Transaksi Baru
                 </a>
             </div>
@@ -45,10 +45,20 @@
                             </td>
                             <td class="p-2">{{ $trx->kasir->name ?? '-' }}</td>
                             <td class="p-2">
-                                <a href="{{ route('transaksi.show', $trx->id) }}"
-                                    class="text-blue-600 hover:underline">
-                                    Detail
-                                </a>
+                                <a href="{{ route('data-transaksi.show', $trx->id) }}" class="text-green-600 hover:underline">Detail</a>
+                                @if($trx->status !== 'sudah')
+                                <span class="text-gray-400">|</span>
+                                <a href="{{ route('data-transaksi.edit', $trx->id) }}" class="text-blue-600 hover:underline">Edit</a>
+                                <span class="text-gray-400">|</span>
+                                <form action="{{ route('data-transaksi.destroy', ['data_transaksi' => $trx->id]) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" onclick="return confirm('Yakin hapus transaksi ini?')" class="text-red-600 hover:underline">
+                                        Hapus
+                                    </button>
+                                </form>
+
+                                @endif
                             </td>
                         </tr>
                         @endforeach

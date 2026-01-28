@@ -9,11 +9,13 @@ class Transaksi extends Model
     protected $guard_name = 'web';
     protected $table = 'transaksi';
     protected $fillable = [
+        'id',
         'kode_transaksi',
         'no_polisi',
         'tanggal',
         'user_id',
-        'total_harga'
+        'total_harga',
+        'status'
     ];
 
     public function user()
@@ -23,7 +25,7 @@ class Transaksi extends Model
 
     public function items()
     {
-        return $this->hasMany(TransaksiItem::class);
+        return $this->hasMany(TransaksiItem::class, 'transaksi_id', 'id');
     }
 
     public function kasir()

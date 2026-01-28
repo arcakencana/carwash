@@ -16,6 +16,7 @@ return new class extends Migration {
             ->constrained('users')
             ->cascadeOnDelete();
             $table->integer('total_harga')->default(0);
+            $table->enum('status', ['belum', 'sudah'])->default('belum');
             $table->timestamps();
         });
     }

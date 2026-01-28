@@ -31,25 +31,14 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['role:kasir'])->group(function () {
 
         Route::resource('data-transaksi', App\Http\Controllers\DataTransaksiController::class);
+        Route::post('data-transaksi/{transaksi}/bayar', [App\Http\Controllers\DataTransaksiController::class, 'bayar'])->name('data-transaksi.bayar');
+
 
     });
 
     Route::middleware(['role:admin'])->group(function () {
 
         Route::resource('master-barang', App\Http\Controllers\MasterBarangController::class);
-
-        Route::get('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::class, 'index'])
-        ->name('pendaftaran.index');
-        Route::get('/pendaftaran/create/{id}', [App\Http\Controllers\PendaftaranController::class, 'create'])
-        ->name('pendaftaran.create');
-        Route::post('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::class, 'store'])
-        ->name('pendaftaran.store');
-        Route::get('/pendaftaran/edit/{id}', [App\Http\Controllers\PendaftaranController::class, 'edit']);
-        Route::put('/pendaftaran/{id}', [App\Http\Controllers\PendaftaranController::class, 'update'])
-        ->name('pendaftaran.update');
-        Route::delete('/pendaftaran', [App\Http\Controllers\PendaftaranController::class, 'destroy'])
-        ->name('pendaftaran.destroy');
-        Route::get('/pendaftaran/laporan/{id}', [App\Http\Controllers\PendaftaranController::class, 'laporan']);
 
     });
 
