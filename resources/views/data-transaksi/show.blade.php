@@ -60,7 +60,7 @@
             <!-- Total -->
             <div class="flex justify-end mt-4">
                 <h3 class="font-semibold text-lg">
-                    Total: 
+                    Total Bayar: 
                     {{ number_format($items->sum(fn($i) => $i->harga * $i->qty), 0, ',', '.') }}
                 </h3>
             </div>

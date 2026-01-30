@@ -39,6 +39,10 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['role:admin'])->group(function () {
 
         Route::resource('master-barang', App\Http\Controllers\MasterBarangController::class);
+        Route::get('/laporan', [App\Http\Controllers\LaporanController::class, 'index'])
+        ->name('laporan.index');
+        Route::get('/laporan/export', [App\Http\Controllers\LaporanController::class, 'export'])
+        ->name('laporan.export');
 
     });
 

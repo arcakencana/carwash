@@ -10,22 +10,6 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-        <!-- Total Transaksi -->
-        <div class="bg-white p-5 rounded shadow">
-          <p class="text-gray-500 text-sm">Total Transaksi</p>
-          <h3 class="text-2xl font-bold">
-            {{ $totalTransaksi }}
-          </h3>
-        </div>
-
-        <!-- Total Pendapatan -->
-        <div class="bg-white p-5 rounded shadow">
-          <p class="text-gray-500 text-sm">Total Pendapatan</p>
-          <h3 class="text-2xl font-bold text-green-600">
-            Rp {{ number_format($totalPendapatan) }}
-          </h3>
-        </div>
-
         <!-- Transaksi Hari Ini -->
         <div class="bg-white p-5 rounded shadow">
           <p class="text-gray-500 text-sm">Transaksi Hari Ini</p>
@@ -39,6 +23,22 @@
           <p class="text-gray-500 text-sm">Pendapatan Hari Ini</p>
           <h3 class="text-2xl font-bold text-blue-600">
             Rp {{ number_format($pendapatanHariIni) }}
+          </h3>
+        </div>
+
+        <!-- Total Transaksi -->
+        <div class="bg-white p-5 rounded shadow">
+          <p class="text-gray-500 text-sm">Total Transaksi</p>
+          <h3 class="text-2xl font-bold">
+            {{ $totalTransaksi }}
+          </h3>
+        </div>
+
+        <!-- Total Pendapatan -->
+        <div class="bg-white p-5 rounded shadow">
+          <p class="text-gray-500 text-sm">Total Pendapatan</p>
+          <h3 class="text-2xl font-bold text-green-600">
+            Rp {{ number_format($totalPendapatan) }}
           </h3>
         </div>
 

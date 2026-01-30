@@ -18,7 +18,7 @@ class MasterBarangController extends Controller
             $query->where('nama', 'like', "%{$search}%");
         }
 
-        $masterBarang = $query->latest()->paginate(10);
+        $masterBarang = $query->latest()->paginate(30);
         $masterBarang->appends(['search' => $search]);
 
         return view('master-barang.index', compact('masterBarang', 'search'));

@@ -55,6 +55,10 @@
                                 Master Barang
                             </a>
 
+                            <a href="{{ route('laporan.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                Laporan
+                            </a>
+
                             <a href="" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                                 User
                             </a>
@@ -144,6 +148,10 @@
                 <div x-show="openAdminMobile" class="ms-4 mt-1 space-y-1">
                     <x-responsive-nav-link :href="route('master-barang.index')" :active="request()->routeIs('master-barang')">
                         {{ __('Master Barang') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link :href="route('laporan.index')" :active="request()->routeIs('laporan')">
+                        {{ __('Laporan') }}
                     </x-responsive-nav-link>
 
                     <x-responsive-nav-link>
