@@ -56,7 +56,6 @@ class WhatsappHelper
         $count   = count($devices);
 
         for ($i = 0; $i < $count; $i++) {
-
             $device = self::getNextDevice();
             $result = self::sendViaDevice($device, $phone, $message);
 

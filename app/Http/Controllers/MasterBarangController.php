@@ -67,15 +67,12 @@ class MasterBarangController extends Controller
     public function destroy(MasterBarang $masterBarang)
     {
         try {
-
             $masterBarang->delete();
 
             return redirect()
             ->route('master-barang.index')
             ->with('success', 'Master Barang berhasil dihapus!');
-
         } catch (\Exception $e) {
-
             // Bisa tulis log jika ingin debug
             \Log::error('Gagal menghapus master barang: ' . $e->getMessage());
 
@@ -84,5 +81,4 @@ class MasterBarangController extends Controller
             ->with('error', 'Gagal menghapus master barang! Silakan coba lagi.');
         }
     }
-
 }

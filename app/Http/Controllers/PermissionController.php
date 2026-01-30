@@ -50,5 +50,4 @@ class PermissionController extends Controller
 
         return redirect()->route('permissions.index')->with('success', 'Permission dihapus');
     }
-
 }

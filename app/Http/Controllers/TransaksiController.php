@@ -92,11 +92,10 @@ class TransaksiController extends Controller
             ->get();
 
             return view('transaksi.show', compact('transaksi', 'items'));
-        }
-
-        public function destroy(MasterBarang $masterBarang)
-        {
-            //
-        }
-
     }
+
+    public function destroy(MasterBarang $masterBarang)
+    {
+        //
+    }
+}

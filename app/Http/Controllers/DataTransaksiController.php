@@ -155,5 +155,4 @@ class DataTransaksiController extends Controller
         ->route('data-transaksi.index')
         ->with('success', 'Transaksi berhasil dihapus');
     }
-
 }

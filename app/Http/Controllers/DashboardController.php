@@ -13,7 +13,6 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         if (Auth::user()->role === 'admin') {
-
             $totalTransaksi = Transaksi::count();
             $totalPendapatan = Transaksi::sum('total_harga');
 
@@ -29,9 +28,7 @@ class DashboardController extends Controller
                 'transaksiHariIni',
                 'pendapatanHariIni'
             ));
-
         } else {
-
             $hariIni = Carbon::today();
 
             $transaksiHariIni = Transaksi::whereDate('tanggal', $hariIni)->count();
@@ -44,5 +41,4 @@ class DashboardController extends Controller
             ));
         }
     }
-
 }

@@ -71,7 +71,7 @@ class DetailTransaksiSheet implements FromCollection, WithHeadings, WithTitle, W
                     ->getNumberFormat()
                     ->setFormatCode('"Rp" #,##0');
 
-                foreach (range('A','G') as $col) {
+                foreach (range('A', 'G') as $col) {
                     $event->sheet->getColumnDimension($col)->setAutoSize(true);
                 }
             }

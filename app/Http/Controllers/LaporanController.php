@@ -55,9 +55,7 @@ class LaporanController extends Controller
     {
         return Excel::download(
             new LaporanTransaksiExport($request->start, $request->end),
-            'Laporan_Transaksi_'.$request->start.'_sd_'.$request->end.'.xlsx'
+            'Laporan_Transaksi_' . $request->start . '_sd_' . $request->end . '.xlsx'
         );
     }
-
-
 }
