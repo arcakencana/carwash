@@ -40,37 +40,44 @@
                     <table class="w-full border text-sm">
                         <thead class="bg-gray-100">
                             <tr>
-                                <th class="p-2 text-left">NAMA ITEMS</th>
-                                <th class="p-2 text-right">TOTAL QTY</th>
-                                <th class="p-2 text-right">TOTAL MODAL</th>
-                                <th class="p-2 text-right">TOTAL JUAL</th>
-                                <th class="p-2 text-right">LABA BERSIH</th>
+                                <th class="p-2 text-left">Nama Items</th>
+                                <th class="p-2 text-left">Qty</th>
+                                <th class="p-2 text-left">Modal</th>
+                                <th class="p-2 text-left">Total</th>
+                                <th class="p-2 text-left">Diskon</th>
+                                <th class="p-2 text-left">Grand Total</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($data as $row)
-                            <tr class="border-t">
-                                <td class="p-2">{{ $row->nama }}</td>
-                                <td class="p-2 text-right">{{ $row->total_qty }}</td>
-                                <td class="p-2 text-right">{{ number_format($row->total_modal) }}</td>
-                                <td class="p-2 text-right">{{ number_format($row->total_jual) }}</td>
-                                <td class="p-2 text-right font-semibold text-green-600">
-                                    {{ number_format($row->total_jual - $row->total_modal) }}
+                            <tr>
+                                <td class="p-2 text-left">{{ $row->nama }}</td>
+                                <td class="p-2 text-left">{{ $row->total_qty }}</td>
+                                <td class="p-2 text-left">{{ number_format($row->total_modal,0,',','.') }}</td>
+                                <td class="p-2 text-left">{{ number_format($row->total_jual,0,',','.') }}</td>
+                                <td class="p-2 text-left text-danger">
+                                    -{{ number_format($row->total_diskon,0,',','.') }}
+                                </td>
+                                <td class="text-end fw-bold">
+                                    {{ number_format($row->grand_total,0,',','.') }}
                                 </td>
                             </tr>
                             @endforeach
                         </tbody>
+
                         <tfoot class="bg-gray-100 font-bold">
                             <tr>
-                                <td class="p-2">TOTAL</td>
-                                <td class="p-2 text-right">{{ $data->sum('total_qty') }}</td>
-                                <td class="p-2 text-right">{{ number_format($data->sum('total_modal')) }}</td>
-                                <td class="p-2 text-right">{{ number_format($data->sum('total_jual')) }}</td>
-                                <td class="p-2 text-right">
-                                    {{ number_format($data->sum('total_jual') - $data->sum('total_modal')) }}
+                                <td class="p-2 text-left">TOTAL</td>
+                                <td class="p-2 text-left">{{ $data->sum('total_qty') }}</td>
+                                <td class="p-2 text-left">{{ number_format($data->sum('total_modal'),0,',','.') }}</td>
+                                <td class="p-2 text-left">{{ number_format($data->sum('total_jual'),0,',','.') }}</td>
+                                <td class="p-2 text-left text-danger">
+                                    -{{ number_format($data->sum('total_diskon'),0,',','.') }}
                                 </td>
+                                <td class="p-2 text-left">{{ number_format($data->sum('grand_total'),0,',','.') }}</td>
                             </tr>
                         </tfoot>
+
                     </table>
 
                 </div>

@@ -40,48 +40,78 @@
                                 <th class="p-2 text-left">Items</th>
                                 <th class="p-2 text-left">Harga</th>
                                 <th class="p-2 text-left">Qty</th>
+                                <th class="p-2 text-left">Diskon</th>
                                 <th class="p-2 text-left">Subtotal</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($items as $item)
-                            <tr>
+                            @php
+                            $harga = $item->harga;
+                            $qty = $item->qty;
+                            $subtotalAsli = $harga * $qty;
+                            $diskon = $item->diskon;
+                            @endphp
+                            <tr class="border-t">
                                 <td class="p-2">{{ $item->barang->nama }}</td>
-                                <td class="p-2">{{ number_format($item->harga, 0, ',', '.') }}</td>
-                                <td class="p-2">{{ $item->qty }}</td>
-                                <td class="p-2">{{ number_format($item->harga * $item->qty, 0, ',', '.') }}</td>
+                                <td class="p-2">Rp {{ number_format($harga,0,',','.') }}</td>
+                                <td class="p-2">{{ $qty }}</td>
+                                <td class="p-2 text-red-600">
+                                    Rp {{ number_format($diskon,0,',','.') }}
+                                </td>
+                                <td class="p-2 font-semibold">
+                                    Rp {{ number_format($subtotalAsli - $diskon,0,',','.') }}
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>
+
                     </table>
                 </div>
             </div>
 
             <!-- Total -->
+            @php
+            $total = $items->sum(fn($i) => $i->harga * $i->qty);
+            $totalDiskon = $items->sum('diskon');
+            $grandTotal = $total - $totalDiskon;
+            @endphp
+
             <div class="flex justify-end mt-4">
-                <h3 class="font-semibold text-lg">
-                    Total Bayar: 
-                    {{ number_format($items->sum(fn($i) => $i->harga * $i->qty), 0, ',', '.') }}
-                </h3>
+
+                <div class="text-right space-y-1">
+                    <div>Total : Rp {{ number_format($total,0,',','.') }}</div>
+                    <div class="text-red-600">
+                        Diskon : - Rp {{ number_format($totalDiskon,0,',','.') }}
+                    </div>
+                    <div class="font-bold text-lg border-t pt-1">
+                        Grand Total : Rp {{ number_format($grandTotal,0,',','.') }}
+                    </div>
+                </div>
+
             </div>
+
 
             <!-- Tombol Bayar -->
             @if($transaksi->status !== 'sudah')
             <form action="{{ route('data-transaksi.bayar', $transaksi->id) }}" method="POST" target="_blank">
                 @csrf
-                <button type="submit" class="bg-blue-600 text-white mb-2 px-4 py-2 rounded">
-                    Proses Bayar & Cetak Struk
-                </button>
-            </form>
-            @else
-            <span class="inline-block bg-green-600 text-white mb-2 px-4 py-2 rounded">Sudah Dibayar</span>
-            @endif
+                <input type="hidden" name="grand_total" value="{{ $grandTotal }}">
+                <button type="submit"
+                class="bg-blue-600 text-white mb-2 px-4 py-2 rounded">
+                Proses Bayar & Cetak Struk
+            </button>
+        </form>
 
-            <!-- Tombol Kembali -->
-            <a href="{{ route('data-transaksi.index') }}" class="inline-block bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
-                Kembali
-            </a>
+        @else
+        <span class="inline-block bg-green-600 text-white mb-2 px-4 py-2 rounded">Sudah Dibayar</span>
+        @endif
 
-        </div>
+        <!-- Tombol Kembali -->
+        <a href="{{ route('data-transaksi.index') }}" class="inline-block bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+            Kembali
+        </a>
+
     </div>
+</div>
 </x-app-layout>

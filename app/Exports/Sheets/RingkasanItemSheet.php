@@ -28,27 +28,40 @@ class RingkasanItemSheet implements FromCollection, WithHeadings, WithStyles, Wi
     public function collection()
     {
         return DB::table('transaksi_items')
-            ->join('transaksi', 'transaksi.id', '=', 'transaksi_items.transaksi_id')
-            ->join('master_barang', 'master_barang.id', '=', 'transaksi_items.master_barang_id')
-            ->whereBetween('transaksi.tanggal', [$this->start, $this->end])
-            ->where('transaksi.status', 'sudah')
-            ->select(
-                'master_barang.nama',
-                DB::raw('SUM(qty) as total_qty'),
-                DB::raw('SUM(subtotal) as total_jual')
-            )
-            ->groupBy('master_barang.nama')
-            ->get();
+        ->join('transaksi', 'transaksi.id', '=', 'transaksi_items.transaksi_id')
+        ->join('master_barang', 'master_barang.id', '=', 'transaksi_items.master_barang_id')
+        ->whereBetween('transaksi.tanggal', [$this->start, $this->end])
+        ->where('transaksi.status', 'sudah')
+        ->groupBy('master_barang.nama')
+        ->select(
+            'master_barang.nama',
+
+            DB::raw('SUM(transaksi_items.qty) as total_qty'),
+
+            // total sebelum diskon
+            DB::raw('SUM(transaksi_items.qty * transaksi_items.harga) as total_jual'),
+
+            // total diskon
+            DB::raw('SUM(transaksi_items.diskon) as total_diskon'),
+
+            // setelah diskon
+            DB::raw('SUM(transaksi_items.subtotal) as grand_total')
+        )
+        ->get();
     }
+
 
     public function headings(): array
     {
         return [
             'Nama Item',
             'Total Qty',
-            'Total Penjualan'
+            'Total (Sebelum Diskon)',
+            'Total Diskon',
+            'Grand Total'
         ];
     }
+
 
     public function styles(Worksheet $sheet)
     {
@@ -78,12 +91,12 @@ class RingkasanItemSheet implements FromCollection, WithHeadings, WithStyles, Wi
                 ]);
 
                 // Format Rupiah
-                $event->sheet->getStyle('C2:C1000')
-                    ->getNumberFormat()
-                    ->setFormatCode('"Rp" #,##0');
+                $event->sheet->getStyle('C2:E1000')
+                ->getNumberFormat()
+                ->setFormatCode('"Rp" #,##0');
 
                 // Auto width
-                foreach (['A','B','C'] as $col) {
+                foreach (['A','B','C','D','E'] as $col) {
                     $event->sheet->getColumnDimension($col)->setAutoSize(true);
                 }
             }

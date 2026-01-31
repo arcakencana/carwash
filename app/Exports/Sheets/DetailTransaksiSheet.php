@@ -25,21 +25,23 @@ class DetailTransaksiSheet implements FromCollection, WithHeadings, WithTitle, W
     public function collection()
     {
         return DB::table('transaksi_items')
-            ->join('transaksi', 'transaksi.id', '=', 'transaksi_items.transaksi_id')
-            ->join('master_barang', 'master_barang.id', '=', 'transaksi_items.master_barang_id')
-            ->whereBetween('transaksi.tanggal', [$this->start, $this->end])
-            ->where('transaksi.status', 'sudah')
-            ->select(
-                'transaksi.kode_transaksi',
-                'transaksi.tanggal',
-                'transaksi.no_polisi',
-                'master_barang.nama',
-                'transaksi_items.qty',
-                'transaksi_items.harga',
-                'transaksi_items.subtotal'
-            )
-            ->get();
+        ->join('transaksi', 'transaksi.id', '=', 'transaksi_items.transaksi_id')
+        ->join('master_barang', 'master_barang.id', '=', 'transaksi_items.master_barang_id')
+        ->whereBetween('transaksi.tanggal', [$this->start, $this->end])
+        ->where('transaksi.status', 'sudah')
+        ->select(
+            'transaksi.kode_transaksi',
+            'transaksi.tanggal',
+            'transaksi.no_polisi',
+            'master_barang.nama',
+            'transaksi_items.qty',
+            'transaksi_items.harga',
+            'transaksi_items.diskon',
+            'transaksi_items.subtotal'
+        )
+        ->get();
     }
+
 
     public function headings(): array
     {
@@ -50,9 +52,11 @@ class DetailTransaksiSheet implements FromCollection, WithHeadings, WithTitle, W
             'Item',
             'Qty',
             'Harga',
+            'Diskon',
             'Subtotal'
         ];
     }
+
 
     public function title(): string
     {
@@ -67,11 +71,11 @@ class DetailTransaksiSheet implements FromCollection, WithHeadings, WithTitle, W
                 $event->sheet->getStyle('A1:G1')->getFont()->setBold(true);
 
                 // Rupiah
-                $event->sheet->getStyle('F2:G1000')
-                    ->getNumberFormat()
-                    ->setFormatCode('"Rp" #,##0');
+                $event->sheet->getStyle('F2:H1000')
+                ->getNumberFormat()
+                ->setFormatCode('"Rp" #,##0');
 
-                foreach (range('A', 'G') as $col) {
+                foreach (range('A', 'H') as $col) {
                     $event->sheet->getColumnDimension($col)->setAutoSize(true);
                 }
             }

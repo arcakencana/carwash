@@ -14,6 +14,7 @@ class TransaksiItem extends Model
         'master_barang_id',
         'qty',
         'harga',
+        'diskon',
         'subtotal'
     ];
 

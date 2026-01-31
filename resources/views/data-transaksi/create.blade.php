@@ -37,15 +37,17 @@
                                     <th class="p-2 text-left">Item</th>
                                     <th class="p-2 text-left">Harga</th>
                                     <th class="p-2 text-left">Qty</th>
+                                    <th class="p-2 text-left">Diskon</th>
                                     <th class="p-2 text-left">Subtotal</th>
                                     <th class="p-2"></th>
                                 </tr>
                             </thead>
+
                             <tbody id="items">
                                 <tr>
                                     <td class="p-2">
                                         <select name="items[0][id]" class="barang w-full border p-2">
-                                            <option>-- Pilih --</option>
+                                            <option value="">-- Pilih --</option>
                                             @foreach($barangs as $barang)
                                             <option value="{{ $barang->id }}"
                                                 data-harga="{{ $barang->harga_jual }}">
@@ -54,18 +56,43 @@
                                             @endforeach
                                         </select>
                                     </td>
+
                                     <td class="p-2 harga">0</td>
+
                                     <td class="p-2">
-                                        <input type="number" name="items[0][qty]" value="1"
-                                        class="qty w-full border p-2">
+                                        <input type="number"
+                                        name="items[0][qty]"
+                                        value="1"
+                                        min="1"
+                                        class="qty w-20 border p-2">
                                     </td>
-                                    <td class="p-2 subtotal">0</td>
+
+                                    <!-- DISKON -->
                                     <td class="p-2">
-                                        <button type="button"
-                                        class="hapus text-red-600">X</button>
+                                        <div class="flex items-center gap-1">
+                                            <select class="diskon-tipe w-10 border p-2">
+                                                <option value="nominal">Rp</option>
+                                                <option value="persen">%</option>
+                                            </select>
+                                            <input type="number"
+                                            class="diskon w-20 text-right border px-2 py-1"
+                                            placeholder="0">
+
+                                            <!-- YANG MASUK DB -->
+                                            <input type="hidden"
+                                            name="items[0][diskon]"
+                                            class="diskon-nominal">
+                                        </div>
+                                    </td>
+
+                                    <td class="p-2 subtotal">0</td>
+
+                                    <td class="p-2">
+                                        <button type="button" class="hapus text-red-600">X</button>
                                     </td>
                                 </tr>
                             </tbody>
+
                         </table>
                     </div>
 
@@ -74,6 +101,33 @@
                     + Tambah Item
                 </button>
             </div>
+
+            <div class="flex justify-end mt-4">
+                <div class="w-full max-w-sm bg-gray-50 border rounded p-4 space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span>Total Item</span>
+                        <span id="totalQty" class="font-semibold">0</span>
+                    </div>
+
+                    <div class="flex justify-between">
+                        <span>Total Harga</span>
+                        <span id="totalHarga" class="font-mono">Rp 0</span>
+                    </div>
+
+                    <div class="flex justify-between text-red-600">
+                        <span>Total Diskon</span>
+                        <span id="totalDiskon" class="font-mono">Rp 0</span>
+                    </div>
+
+                    <hr>
+
+                    <div class="flex justify-between text-lg font-bold">
+                        <span>GRAND TOTAL</span>
+                        <span id="grandTotal" class="font-mono text-green-600">Rp 0</span>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="flex justify-end gap-3 mt-4">
                 <!-- Tombol Kembali -->
@@ -95,32 +149,31 @@
 </div>
 
 <script>
-    let index = 1;
+    let index = document.querySelectorAll('#items tr').length;
 
     document.getElementById('tambah').addEventListener('click', function () {
         const tbody = document.getElementById('items');
-        const row = tbody.children[0].cloneNode(true);
+        const row = tbody.querySelector('tr').cloneNode(true);
 
-    // update name index
-        row.querySelectorAll('select, input').forEach(el => {
-            if (el.name.includes('[id]')) {
-                el.name = `items[${index}][id]`;
-            }
-            if (el.name.includes('[qty]')) {
-                el.name = `items[${index}][qty]`;
-                el.value = 1;
-            }
-        });
+    // reset value
+        row.querySelector('.barang').value = '';
+        row.querySelector('.harga').innerText = '0';
+        row.querySelector('.qty').value = 1;
+        row.querySelector('.diskon').value = 0;
+        row.querySelector('.subtotal').innerText = '0';
 
-    // reset tampilan
-        row.querySelector('.harga').innerText = 0;
-        row.querySelector('.subtotal').innerText = 0;
+    // update name biar tidak bentrok
+        row.querySelector('.barang').name = `items[${index}][id]`;
+        row.querySelector('.qty').name = `items[${index}][qty]`;
+        row.querySelector('.diskon-nominal').name = `items[${index}][diskon]`;
 
         tbody.appendChild(row);
         index++;
+
+        hitung();
     });
 
-// hapus row
+// hapus item
     document.addEventListener('click', function (e) {
         if (e.target.classList.contains('hapus')) {
             const rows = document.querySelectorAll('#items tr');
@@ -130,42 +183,80 @@
             }
         }
     });
+</script>
 
-// hitung harga & subtotal
+<script>
     function hitung() {
+        let totalQty = 0;
+        let totalHarga = 0;
+        let totalDiskon = 0;
+        let grandTotal = 0;
+
         document.querySelectorAll('#items tr').forEach(row => {
             const barang = row.querySelector('.barang');
             const qty = row.querySelector('.qty');
-            const harga = barang.selectedOptions[0].dataset.harga || 0;
+            const diskonInput = row.querySelector('.diskon');
+            const diskonTipe = row.querySelector('.diskon-tipe');
+            const diskonHidden = row.querySelector('.diskon-nominal');
 
-            row.querySelector('.harga').innerText = harga;
-            row.querySelector('.subtotal').innerText = harga * qty.value;
+            if (!barang || !qty) return;
+
+            const harga = parseInt(barang.selectedOptions[0]?.dataset.harga || 0);
+            const qtyVal = parseInt(qty.value || 0);
+            const subHarga = harga * qtyVal;
+
+        // ===== HITUNG DISKON =====
+            let diskonNominal = 0;
+            let diskonVal = parseInt(diskonInput?.value || 0);
+
+            if (diskonTipe?.value === 'persen') {
+                diskonVal = Math.min(diskonVal, 100);
+                diskonNominal = Math.round(subHarga * diskonVal / 100);
+            } else {
+                diskonNominal = diskonVal;
+            }
+
+        // proteksi diskon lebih besar dari subtotal
+            diskonNominal = Math.min(diskonNominal, subHarga);
+
+            const subtotal = subHarga - diskonNominal;
+
+        // ===== SIMPAN KE INPUT HIDDEN (INI YANG PENTING) =====
+            if (diskonHidden) {
+                diskonHidden.value = diskonNominal;
+            }
+
+        // ===== UPDATE TAMPILAN =====
+            row.querySelector('.harga').innerText = harga.toLocaleString('id-ID');
+            row.querySelector('.subtotal').innerText = subtotal.toLocaleString('id-ID');
+
+            totalQty += qtyVal;
+            totalHarga += subHarga;
+            totalDiskon += diskonNominal;
+            grandTotal += subtotal;
         });
+
+    // ===== TOTAL =====
+        document.getElementById('totalQty').innerText = totalQty;
+        document.getElementById('totalHarga').innerText =
+        'Rp ' + totalHarga.toLocaleString('id-ID');
+        document.getElementById('totalDiskon').innerText =
+        'Rp ' + totalDiskon.toLocaleString('id-ID');
+        document.getElementById('grandTotal').innerText =
+        'Rp ' + grandTotal.toLocaleString('id-ID');
     }
 
-    document.addEventListener('change', hitung);
-    document.addEventListener('keyup', hitung);
-
-    function hitung() {
-        document.querySelectorAll('#items tr').forEach(row => {
-            const barang = row.querySelector('.barang');
-            const qty = row.querySelector('.qty');
-            const harga = barang.selectedOptions[0].dataset.harga;
-
-            row.querySelector('.harga').innerText = harga;
-            row.querySelector('.subtotal').innerText = harga * qty.value;
-        });
-    }
-
-    document.addEventListener('change', hitung);
-    document.addEventListener('keyup', hitung);
-
-    const inputPolisi = document.querySelector('input[name="no_polisi"]');
-
-    inputPolisi.addEventListener('input', function() {
-        this.value = this.value.replace(/\s/g, '').toUpperCase();
+// ===== EVENT =====
+    document.addEventListener('change', e => {
+        if (e.target.closest('#items')) hitung();
+    });
+    document.addEventListener('keyup', e => {
+        if (e.target.closest('#items')) hitung();
     });
 
+// hitung awal
+    hitung();
 </script>
+
 
 </x-app-layout>
