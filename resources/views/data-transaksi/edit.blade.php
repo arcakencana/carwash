@@ -81,7 +81,7 @@
 
                                     {{-- INPUT TAMPIL --}}
                                     <input type="number"
-                                    class="diskon w-20 text-right border px-2 py-1"
+                                    class="diskon w-16 text-center border rounded px-1 py-1 text-sm"
                                     value="{{ $item->diskon ?? 0 }}"
                                     min="0">
 
@@ -158,13 +158,13 @@
 
                             <td class="p-2">
                                 <div class="flex items-center gap-1">
-                                    <select class="diskon-tipe border rounded px-1 py-1 text-sm">
+                                    <select class="diskon-tipe w-10 border p-2">
                                         <option value="nominal">Rp</option>
                                         <option value="persen">%</option>
                                     </select>
 
                                     <input type="number"
-                                    class="diskon w-20 border rounded px-1 py-1 text-sm text-right"
+                                    class="diskon w-16 text-center border rounded px-1 py-1 text-sm"
                                     value="0"
                                     min="0">
                                 </div>
