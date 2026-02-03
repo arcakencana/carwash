@@ -42,10 +42,9 @@
                             <tr>
                                 <th class="p-2 text-left">Nama Items</th>
                                 <th class="p-2 text-left">Qty</th>
-                                <th class="p-2 text-left">Modal</th>
-                                <th class="p-2 text-left">Total</th>
-                                <th class="p-2 text-left">Diskon</th>
-                                <th class="p-2 text-left">Grand Total</th>
+                                <th class="p-2 text-left">Total Pendapatan</th>
+                                <th class="p-2 text-left">Total Diskon</th>
+                                <th class="p-2 text-left">Grand Total Pendapatan</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -53,14 +52,9 @@
                             <tr>
                                 <td class="p-2 text-left">{{ $row->nama }}</td>
                                 <td class="p-2 text-left">{{ $row->total_qty }}</td>
-                                <td class="p-2 text-left">{{ number_format($row->total_modal,0,',','.') }}</td>
-                                <td class="p-2 text-left">{{ number_format($row->total_jual,0,',','.') }}</td>
-                                <td class="p-2 text-left text-danger">
-                                    -{{ number_format($row->total_diskon,0,',','.') }}
-                                </td>
-                                <td class="text-end fw-bold">
-                                    {{ number_format($row->grand_total,0,',','.') }}
-                                </td>
+                                <td class="p-2 text-left">{{ number_format($row->total_pendapatan,0,',','.') }}</td>
+                                <td class="p-2 text-left">-{{ number_format($row->total_diskon,0,',','.') }}</td>
+                                <td class="p-2 text-left">{{ number_format($row->grand_total,0,',','.') }}</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -69,11 +63,8 @@
                             <tr>
                                 <td class="p-2 text-left">TOTAL</td>
                                 <td class="p-2 text-left">{{ $data->sum('total_qty') }}</td>
-                                <td class="p-2 text-left">{{ number_format($data->sum('total_modal'),0,',','.') }}</td>
-                                <td class="p-2 text-left">{{ number_format($data->sum('total_jual'),0,',','.') }}</td>
-                                <td class="p-2 text-left text-danger">
-                                    -{{ number_format($data->sum('total_diskon'),0,',','.') }}
-                                </td>
+                                <td class="p-2 text-left">{{ number_format($data->sum('total_pendapatan'),0,',','.') }}</td>
+                                <td class="p-2 text-left">-{{ number_format($data->sum('total_diskon'),0,',','.') }}</td>
                                 <td class="p-2 text-left">{{ number_format($data->sum('grand_total'),0,',','.') }}</td>
                             </tr>
                         </tfoot>

@@ -22,7 +22,8 @@
                         <tr>
                             <th class="p-2 text-left">Kode</th>
                             <th class="p-2 text-left">Tanggal</th>
-                            <th class="p-2 text-left">No Polisi</th>
+                            <th class="p-2 text-left">No Pelat Kendaraan</th>
+                            <th class="p-2 text-left">No Whatsapp</th>
                             <th class="p-2 text-left">Total</th>
                             <th class="p-2 text-left">Status</th>
                             <th class="p-2 text-left">User</th>
@@ -37,6 +38,7 @@
                                 {{ \Carbon\Carbon::parse($trx->tanggal)->format('d M Y') }}
                             </td>
                             <td class="p-2">{{ $trx->no_polisi }}</td>
+                            <td class="p-2">{{ $trx->no_wa }}</td>
                             <td class="p-2 text-left font-semibold">
                                 {{ number_format($trx->total_harga) }}
                             </td>

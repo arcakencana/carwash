@@ -14,7 +14,7 @@ class DataTransaksiController extends Controller
     public function index()
     {
         $transaksis = Transaksi::with('kasir')
-        ->latest()
+        ->orderBy('id', 'desc')
         ->paginate(10);
 
         return view('data-transaksi.index', compact('transaksis'));
@@ -31,7 +31,7 @@ class DataTransaksiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'no_polisi' => 'required|string|max:20',
+            'no_polisi' => 'required|string|max:10',
             'items' => 'required|array|min:1',
             'items.*.id' => 'required|exists:master_barang,id',
             'items.*.qty' => 'required|integer|min:1',
@@ -41,48 +41,44 @@ class DataTransaksiController extends Controller
         DB::transaction(function () use ($request) {
 
             $transaksi = Transaksi::create([
-                'kode_transaksi' => 'TRX-' . time(),
-                'no_polisi' => $request->no_polisi,
-                'tanggal' => now(),
-                'user_id' => Auth::id(),
-        'total_harga' => 0, // nanti diupdate
-    ]);
+                'kode_transaksi'    => 'TRX-' . time(),
+                'no_polisi'         => $request->no_polisi,
+                'no_wa'             => $request->no_wa,
+                'tanggal'           => now(),
+                'user_id'           => Auth::id(),
+                'total_harga'       => 0,
+            ]);
 
             $grandTotal = 0;
 
             foreach ($request->items as $item) {
                 $barang = MasterBarang::findOrFail($item['id']);
-
                 $qty = (int) $item['qty'];
                 $harga = (int) $barang->harga_jual;
-        $diskon = (int) ($item['diskon'] ?? 0); // ✅ NOMINAL
+                $diskon = (int) ($item['diskon'] ?? 0);
+                $subHarga = $harga * $qty;
+                $subtotal = max($subHarga - $diskon, 0);
 
-        $subHarga = $harga * $qty;
-        $subtotal = max($subHarga - $diskon, 0);
+                TransaksiItem::create([
+                    'transaksi_id'      => $transaksi->id,
+                    'master_barang_id'  => $barang->id,
+                    'qty'               => $qty,
+                    'harga'             => $harga,
+                    'diskon'            => $diskon,
+                    'subtotal'          => $subtotal,
+                ]);
 
-        TransaksiItem::create([
-            'transaksi_id' => $transaksi->id,
-            'master_barang_id' => $barang->id,
-            'qty' => $qty,
-            'harga' => $harga,
-            'diskon' => $diskon, // ✅ MASUK DB
-            'subtotal' => $subtotal,
-        ]);
+                $grandTotal += $subtotal;
+            }
 
-        $grandTotal += $subtotal;
-    }
+            $transaksi->update([
+                'total_harga' => $grandTotal
+            ]);
+        });
 
-    // ✅ SIMPAN GRAND TOTAL
-    $transaksi->update([
-        'total_harga' => $grandTotal
-    ]);
-});
-
-// redirect
         return redirect()
         ->route('data-transaksi.index')
         ->with('success', 'Transaksi berhasil disimpan');
-
     }
 
     public function edit(Transaksi $data_transaksi)
@@ -101,19 +97,13 @@ class DataTransaksiController extends Controller
     public function update(Request $request, $id)
     {
         $transaksi = Transaksi::findOrFail($id);
-
-        $transaksi->update([
-            'no_polisi' => $request->no_polisi,
-        ]);
-
-        // HAPUS ITEM LAMA
+        $transaksi->update(['no_polisi' => $request->no_polisi]);
         $transaksi->items()->delete();
 
         $total = 0;
         $totalDiskon = 0;
 
         foreach ($request->items as $item) {
-
             $barang = MasterBarang::findOrFail($item['barang_id']);
 
             $harga = (int) $barang->harga_jual;
@@ -122,30 +112,26 @@ class DataTransaksiController extends Controller
             $diskonInput = (float) ($item['diskon'] ?? 0);
             $diskonTipe  = $item['diskon_tipe'] ?? 'nominal';
 
-            // ⬇️ PAKSA HITUNG NOMINAL DI SINI
             if ($diskonTipe === 'persen') {
                 $diskonNominal = ($harga * $qty) * ($diskonInput / 100);
             } else {
                 $diskonNominal = $diskonInput;
             }
 
-            // safety
             $diskonNominal = min($diskonNominal, $harga * $qty);
-
             $subtotal = ($harga * $qty) - $diskonNominal;
 
             $transaksi->items()->create([
-                'master_barang_id' => $barang->id,
-                'harga' => $harga,
-                'qty' => $qty,
-                'diskon' => $diskonNominal,
-                'subtotal' => $subtotal,
+                'master_barang_id'  => $barang->id,
+                'harga'             => $harga,
+                'qty'               => $qty,
+                'diskon'            => $diskonNominal,
+                'subtotal'          => $subtotal,
             ]);
 
             $total += $harga * $qty;
             $totalDiskon += $diskonNominal;
         }
-
 
         $transaksi->update([
             'total_harga' => $total,
@@ -178,11 +164,11 @@ class DataTransaksiController extends Controller
     }
 
 
-    public function destroy(Transaksi $transaksi)
+    public function destroy(Transaksi $data_transaksi)
     {
-        DB::transaction(function () use ($transaksi) {
-            $transaksi->items()->delete();
-            $transaksi->delete();
+        DB::transaction(function () use ($data_transaksi) {
+            $data_transaksi->items()->delete();
+            $data_transaksi->delete();
         });
 
         return redirect()

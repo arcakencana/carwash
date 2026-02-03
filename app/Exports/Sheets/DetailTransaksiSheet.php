@@ -42,7 +42,6 @@ class DetailTransaksiSheet implements FromCollection, WithHeadings, WithTitle, W
         ->get();
     }
 
-
     public function headings(): array
     {
         return [

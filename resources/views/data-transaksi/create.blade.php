@@ -20,9 +20,16 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="block font-semibold">No Polisi</label>
+                    <label class="block font-semibold">No Pelat Kendaraan</label>
                     <input type="text"
                     name="no_polisi"
+                    class="w-full border rounded p-2">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block font-semibold">No Whatsapp</label>
+                    <input type="text"
+                    name="no_wa"
                     class="w-full border rounded p-2">
                 </div>
 

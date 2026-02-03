@@ -8,7 +8,6 @@ use App\Models\TransaksiItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Crypt;
 
 class TransaksiController extends Controller
 {
@@ -16,7 +15,7 @@ class TransaksiController extends Controller
     {
         $transaksis = Transaksi::with('kasir')
         ->where('user_id', Auth::id())
-        ->orderBy('created_at', 'desc')
+        ->orderBy('id', 'desc')
         ->paginate(10);
 
         return view('transaksi.index', compact('transaksis'));
@@ -34,6 +33,7 @@ class TransaksiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'no_polisi' => 'required|string|max:10',
             'items.*.id' => 'required',
             'items.*.qty' => 'required|integer|min:1'
         ]);
@@ -41,11 +41,12 @@ class TransaksiController extends Controller
         DB::transaction(function () use ($request) {
 
             $transaksi = Transaksi::create([
-                'kode_transaksi' => 'TRX-' . time(),
-                'no_polisi' => $request->no_polisi,
-                'tanggal' => now(),
-                'user_id' => Auth::id(),
-                'total_harga' => 0
+                'kode_transaksi'    => 'TRX-' . time(),
+                'no_polisi'         => $request->no_polisi,
+                'no_wa'             => $request->no_wa,
+                'tanggal'           => now(),
+                'user_id'           => Auth::id(),
+                'total_harga'       => 0
             ]);
 
             $total = 0;
@@ -56,11 +57,11 @@ class TransaksiController extends Controller
                 $total += $subtotal;
 
                 TransaksiItem::create([
-                    'transaksi_id' => $transaksi->id,
-                    'master_barang_id' => $barang->id,
-                    'qty' => $item['qty'],
-                    'harga' => $barang->harga_jual,
-                    'subtotal' => $subtotal
+                    'transaksi_id'      => $transaksi->id,
+                    'master_barang_id'  => $barang->id,
+                    'qty'               => $item['qty'],
+                    'harga'             => $barang->harga_jual,
+                    'subtotal'          => $subtotal
                 ]);
             }
 
@@ -71,22 +72,20 @@ class TransaksiController extends Controller
         ->with('success', 'Transaksi berhasil disimpan');
     }
 
-    public function edit(MasterBarang $masterBarang)
+    public function edit(Transaksi $transaksi)
     {
         //
     }
 
-    public function update(Request $request, MasterBarang $masterBarang)
+    public function update(Request $request, Transaksi $transaksi)
     {
         //
     }
 
     public function show($id)
     {
-        // Ambil transaksi beserta user
         $transaksi = Transaksi::with('user')->findOrFail($id);
 
-        // Ambil item transaksi beserta data barang
         $items = TransaksiItem::where('transaksi_id', $id)
             ->with('barang') // pastikan relasi 'barang' ada di model TransaksiItem
             ->get();
@@ -94,7 +93,7 @@ class TransaksiController extends Controller
             return view('transaksi.show', compact('transaksi', 'items'));
     }
 
-    public function destroy(MasterBarang $masterBarang)
+    public function destroy(Transaksi $transaksi)
     {
         //
     }

@@ -24,6 +24,10 @@
                             <td class="p-2">: {{ $transaksi->no_polisi }}</td>
                         </tr>
                         <tr class="border-b">
+                            <td class="p-2 font-semibold">No Whatsapp</td>
+                            <td class="p-2">: {{ $transaksi->no_wa }}</td>
+                        </tr>
+                        <tr class="border-b">
                             <td class="p-2 font-semibold">Status</td>
                             <td class="p-2">: {{ $transaksi->status ?? 'Belum Dibayar' }}</td>
                         </tr>
