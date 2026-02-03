@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('kode_transaksi')->unique();
             $table->string('no_polisi');
+            $table->string('no_wa')->default('0');
             $table->date('tanggal');
             $table->foreignId('user_id')
             ->constrained('users')

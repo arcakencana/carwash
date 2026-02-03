@@ -12,6 +12,7 @@ class Transaksi extends Model
         'id',
         'kode_transaksi',
         'no_polisi',
+        'no_wa',
         'tanggal',
         'user_id',
         'total_harga',

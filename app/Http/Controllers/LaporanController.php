@@ -22,17 +22,19 @@ class LaporanController extends Controller
             ->join('master_barang', 'master_barang.id', '=', 'transaksi_items.master_barang_id')
             ->where('transaksi.status', 'sudah')
             ->whereBetween('transaksi.created_at', [$tanggalAwal, $tanggalAkhir])
-            ->groupBy('transaksi_items.master_barang_id', 'master_barang.nama')
+            ->groupBy('transaksi_items.master_barang_id', 'master_barang.nama', 'master_barang.harga_modal')
             ->select(
                 'master_barang.nama',
+                'master_barang.harga_modal',
                 DB::raw('SUM(transaksi_items.qty) as total_qty'),
-                DB::raw('SUM(transaksi_items.qty * master_barang.harga_modal) as total_modal'),
-                // TOTAL JUAL SEBELUM DISKON
-                DB::raw('SUM(transaksi_items.qty * transaksi_items.harga) as total_jual'),
+                // TOTAL PENDAPATAN - MODAL
+                DB::raw('SUM(transaksi_items.qty * (transaksi_items.harga - master_barang.harga_modal)) 
+                    as total_pendapatan'),
                 // TOTAL DISKON
                 DB::raw('SUM(transaksi_items.diskon) as total_diskon'),
                 // GRAND TOTAL (SETELAH DISKON)
-                DB::raw('SUM(transaksi_items.subtotal) as grand_total')
+                DB::raw('SUM((transaksi_items.qty * (transaksi_items.harga - master_barang.harga_modal)) 
+                    - transaksi_items.diskon) as grand_total')
             )
             ->get();
         }

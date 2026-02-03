@@ -10,7 +10,6 @@
             <form action="{{ route('transaksi.store') }}" method="POST">
                 @csrf
 
-                <!-- User -->
                 <div class="mb-4">
                     <label class="block font-semibold">User</label>
                     <input type="text"
@@ -20,16 +19,21 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="block font-semibold">No Polisi</label>
+                    <label class="block font-semibold">No Pelat Kendaraan</label>
                     <input type="text"
                     name="no_polisi"
                     class="w-full border rounded p-2">
                 </div>
 
-                <!-- Item Belanja -->
+                <div class="mb-4">
+                    <label class="block font-semibold">No Whatsapp</label>
+                    <input type="text"
+                    name="no_wa"
+                    class="w-full border rounded p-2">
+                </div>
+
                 <div class="mb-4">
 
-                    <!-- Tambahkan wrapper scroll untuk mobile -->
                     <div class="overflow-x-auto">
                         <table class="w-full min-w-[600px] border border-gray-200">
                             <thead class="bg-gray-100">
@@ -101,7 +105,7 @@
         const tbody = document.getElementById('items');
         const row = tbody.children[0].cloneNode(true);
 
-    // update name index
+        // update name index
         row.querySelectorAll('select, input').forEach(el => {
             if (el.name.includes('[id]')) {
                 el.name = `items[${index}][id]`;
@@ -112,7 +116,7 @@
             }
         });
 
-    // reset tampilan
+        // reset tampilan
         row.querySelector('.harga').innerText = 0;
         row.querySelector('.subtotal').innerText = 0;
 
@@ -120,7 +124,7 @@
         index++;
     });
 
-// hapus row
+    // hapus row
     document.addEventListener('click', function (e) {
         if (e.target.classList.contains('hapus')) {
             const rows = document.querySelectorAll('#items tr');
@@ -131,7 +135,7 @@
         }
     });
 
-// hitung harga & subtotal
+    // hitung harga & subtotal
     function hitung() {
         document.querySelectorAll('#items tr').forEach(row => {
             const barang = row.querySelector('.barang');

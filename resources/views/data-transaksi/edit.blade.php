@@ -12,7 +12,6 @@
                 @csrf
                 @method('PUT')
 
-                <!-- User -->
                 <div class="mb-4">
                     <label class="block font-semibold">User</label>
                     <input type="text"
@@ -21,15 +20,20 @@
                     readonly>
                 </div>
 
-                <!-- No Polisi -->
                 <div class="mb-4">
-                    <label class="block font-semibold">No Polisi</label>
+                    <label class="block font-semibold">No Pelat Kendaraan</label>
                     <input type="text" name="no_polisi"
                     value="{{ $transaksi->no_polisi }}"
                     class="w-full border rounded p-2">
                 </div>
 
-                <!-- Items -->
+                <div class="mb-4">
+                    <label class="block font-semibold">No Whatsapp</label>
+                    <input type="text" name="no_wa"
+                    value="{{ $transaksi->no_wa }}"
+                    class="w-full border rounded p-2">
+                </div>
+
                 <div class="mb-4 overflow-x-auto">
                     <table class="w-full min-w-[600px] border border-gray-200">
                         <thead class="bg-gray-100 text-sm">

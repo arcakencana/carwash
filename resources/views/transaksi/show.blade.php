@@ -19,8 +19,12 @@
                                 <td class="p-2">: {{ $transaksi->kode_transaksi }}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="p-2 font-semibold">No Polisi</td>
+                                <td class="p-2 font-semibold">No Pelat Kendaraan</td>
                                 <td class="p-2">: {{ $transaksi->no_polisi }}</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-2 font-semibold">No Whatsapp</td>
+                                <td class="p-2">: {{ $transaksi->no_wa }}</td>
                             </tr>
                         </tbody>
                     </table>
