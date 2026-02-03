@@ -178,11 +178,11 @@ class DataTransaksiController extends Controller
     }
 
 
-    public function destroy(Transaksi $transaksi)
+    public function destroy(Transaksi $data_transaksi)
     {
-        DB::transaction(function () use ($transaksi) {
-            $transaksi->items()->delete();
-            $transaksi->delete();
+        DB::transaction(function () use ($data_transaksi) {
+            $data_transaksi->items()->delete();
+            $data_transaksi->delete();
         });
 
         return redirect()
