@@ -25,22 +25,16 @@ class LaporanController extends Controller
             ->groupBy('transaksi_items.master_barang_id', 'master_barang.nama')
             ->select(
                 'master_barang.nama',
-
                 DB::raw('SUM(transaksi_items.qty) as total_qty'),
-
                 DB::raw('SUM(transaksi_items.qty * master_barang.harga_modal) as total_modal'),
-
-        // TOTAL JUAL SEBELUM DISKON
+                // TOTAL JUAL SEBELUM DISKON
                 DB::raw('SUM(transaksi_items.qty * transaksi_items.harga) as total_jual'),
-
-        // TOTAL DISKON
+                // TOTAL DISKON
                 DB::raw('SUM(transaksi_items.diskon) as total_diskon'),
-
-        // GRAND TOTAL (SETELAH DISKON)
+                // GRAND TOTAL (SETELAH DISKON)
                 DB::raw('SUM(transaksi_items.subtotal) as grand_total')
             )
             ->get();
-
         }
 
         return view('laporan.index', compact('data'));
@@ -61,6 +55,4 @@ class LaporanController extends Controller
             'laporan-transaksi-' . now()->format('Ymd_His') . '.xlsx'
         );
     }
-
-
 }

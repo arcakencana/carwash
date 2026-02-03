@@ -35,15 +35,11 @@ class RingkasanItemSheet implements FromCollection, WithHeadings, WithStyles, Wi
         ->groupBy('master_barang.nama')
         ->select(
             'master_barang.nama',
-
             DB::raw('SUM(transaksi_items.qty) as total_qty'),
-
             // total sebelum diskon
             DB::raw('SUM(transaksi_items.qty * transaksi_items.harga) as total_jual'),
-
             // total diskon
             DB::raw('SUM(transaksi_items.diskon) as total_diskon'),
-
             // setelah diskon
             DB::raw('SUM(transaksi_items.subtotal) as grand_total')
         )

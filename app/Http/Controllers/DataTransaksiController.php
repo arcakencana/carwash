@@ -45,8 +45,8 @@ class DataTransaksiController extends Controller
                 'no_polisi' => $request->no_polisi,
                 'tanggal' => now(),
                 'user_id' => Auth::id(),
-        'total_harga' => 0, // nanti diupdate
-    ]);
+            'total_harga' => 0, // nanti diupdate
+            ]);
 
             $grandTotal = 0;
 
@@ -55,34 +55,33 @@ class DataTransaksiController extends Controller
 
                 $qty = (int) $item['qty'];
                 $harga = (int) $barang->harga_jual;
-        $diskon = (int) ($item['diskon'] ?? 0); // ✅ NOMINAL
+                $diskon = (int) ($item['diskon'] ?? 0); // ✅ NOMINAL
 
-        $subHarga = $harga * $qty;
-        $subtotal = max($subHarga - $diskon, 0);
+                $subHarga = $harga * $qty;
+                $subtotal = max($subHarga - $diskon, 0);
 
-        TransaksiItem::create([
-            'transaksi_id' => $transaksi->id,
-            'master_barang_id' => $barang->id,
-            'qty' => $qty,
-            'harga' => $harga,
-            'diskon' => $diskon, // ✅ MASUK DB
-            'subtotal' => $subtotal,
-        ]);
+                TransaksiItem::create([
+                'transaksi_id' => $transaksi->id,
+                'master_barang_id' => $barang->id,
+                'qty' => $qty,
+                'harga' => $harga,
+                'diskon' => $diskon, // ✅ MASUK DB
+                'subtotal' => $subtotal,
+                ]);
 
-        $grandTotal += $subtotal;
-    }
+                $grandTotal += $subtotal;
+            }
 
     // ✅ SIMPAN GRAND TOTAL
-    $transaksi->update([
-        'total_harga' => $grandTotal
-    ]);
-});
+            $transaksi->update([
+            'total_harga' => $grandTotal
+            ]);
+        });
 
 // redirect
         return redirect()
         ->route('data-transaksi.index')
         ->with('success', 'Transaksi berhasil disimpan');
-
     }
 
     public function edit(Transaksi $data_transaksi)
@@ -113,7 +112,6 @@ class DataTransaksiController extends Controller
         $totalDiskon = 0;
 
         foreach ($request->items as $item) {
-
             $barang = MasterBarang::findOrFail($item['barang_id']);
 
             $harga = (int) $barang->harga_jual;
