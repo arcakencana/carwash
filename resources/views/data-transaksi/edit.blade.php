@@ -12,26 +12,46 @@
                 @csrf
                 @method('PUT')
 
-                <div class="mb-4">
-                    <label class="block font-semibold">User</label>
-                    <input type="text"
-                    value="{{ auth()->user()->name }}"
-                    class="w-full border rounded p-2 bg-gray-100"
-                    readonly>
-                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
 
-                <div class="mb-4">
-                    <label class="block font-semibold">No Pelat Kendaraan</label>
-                    <input type="text" name="no_polisi"
-                    value="{{ $transaksi->no_polisi }}"
-                    class="w-full border rounded p-2">
-                </div>
+                    <div class="mb-4">
+                        <label class="block font-semibold">User</label>
+                        <input 
+                        type="text"
+                        value="{{ auth()->user()->name }}"
+                        class="w-full border rounded p-2 bg-gray-100"
+                        readonly>
+                    </div>
 
-                <div class="mb-4">
-                    <label class="block font-semibold">No Whatsapp</label>
-                    <input type="text" name="no_wa"
-                    value="{{ $transaksi->no_wa }}"
-                    class="w-full border rounded p-2">
+                    <div class="mb-4">
+                        <label class="block font-semibold">No Pelat </label>
+                        <input 
+                        type="text" 
+                        name="no_polisi"
+                        value="{{ $transaksi->no_polisi }}"
+                        class="w-full border rounded p-2">
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold">Keterangan</label>
+                        <input
+                        type="text"
+                        name="keterangan"
+                        value="{{ $transaksi->keterangan }}"
+                        class="w-full border rounded p-2"
+                        oninput="this.value = this.value.toUpperCase()"
+                        >
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block font-semibold">No Whatsapp</label>
+                        <input 
+                        type="text" 
+                        name="no_wa"
+                        value="{{ $transaksi->no_wa }}"
+                        class="w-full border rounded p-2">
+                    </div>
+
                 </div>
 
                 <div class="mb-4 overflow-x-auto">
@@ -51,7 +71,7 @@
                             <tr class="item-row">
                                 <td class="p-2">
                                     <select name="items[{{ $i }}][barang_id]"
-                                    class="barang w-full border rounded px-2 py-1 text-sm">
+                                    class="barang w-full border rounded">
                                     <option value="">-- Pilih --</option>
                                     @foreach($barangs as $barang)
                                     <option value="{{ $barang->id }}"
@@ -66,22 +86,23 @@
                                 {{ number_format($item->harga) }}
                             </td>
                             <td class="p-2 text-center">
-                                <input type="number"
+                                <input 
+                                type="number"
                                 name="items[{{ $i }}][qty]"
                                 value="{{ $item->qty }}"
                                 min="1"
-                                class="qty w-16 text-center border rounded px-1 py-1 text-sm">
+                                class="qty w-16 border rounded">
                             </td>
                             <td class="p-2">
                                 <div class="flex items-center gap-1">
-                                    <select class="diskon-tipe w-10 border p-2">
+                                    <select class="diskon-tipe w-18 border rounded">
                                         <option value="nominal" selected>Rp</option>
                                         <option value="persen">%</option>
                                     </select>
 
                                     {{-- INPUT TAMPIL --}}
                                     <input type="number"
-                                    class="diskon w-16 text-center border rounded px-1 py-1 text-sm"
+                                    class="diskon w-28 border rounded"
                                     value="{{ $item->diskon ?? 0 }}"
                                     min="0">
 
@@ -112,7 +133,7 @@
 
                         <div class="flex justify-between">
                             <span>Total Item</span>
-                            <span id="totalQty" class="font-semibold">0</span>
+                            <span id="totalQty" class="font-mono">0</span>
                         </div>
 
                         <div class="flex justify-between">
@@ -140,7 +161,7 @@
                     <tbody>
                         <tr id="item-template" class="item-row">
                             <td class="p-2">
-                                <select class="barang w-full border rounded px-2 py-1 text-sm">
+                                <select class="barang w-full border rounded">
                                     <option value="">-- Pilih --</option>
                                     @foreach($barangs as $barang)
                                     <option value="{{ $barang->id }}" data-harga="{{ $barang->harga_jual }}">
@@ -150,27 +171,31 @@
                                 </select>
                             </td>
 
-                            <td class="p-2 text-right harga">0</td>
+                            <td class="p-2 text-right font-mono harga">0</td>
 
                             <td class="p-2 text-center">
-                                <input type="number" class="qty w-16 text-center border rounded px-1 py-1 text-sm" value="1">
+                                <input 
+                                type="number" 
+                                class="qty w-16 border rounded" 
+                                value="1">
                             </td>
 
                             <td class="p-2">
                                 <div class="flex items-center gap-1">
-                                    <select class="diskon-tipe w-10 border p-2">
+                                    <select class="diskon-tipe w-18 border rounded">
                                         <option value="nominal">Rp</option>
                                         <option value="persen">%</option>
                                     </select>
 
-                                    <input type="number"
-                                    class="diskon w-16 text-center border rounded px-1 py-1 text-sm"
+                                    <input 
+                                    type="number"
+                                    class="diskon w-28 border rounded"
                                     value="0"
                                     min="0">
                                 </div>
                             </td>
 
-                            <td class="p-2 text-right subtotal">0</td>
+                            <td class="p-2 text-right font-mono subtotal">0</td>
 
                             <td class="p-2 text-center">
                                 <button type="button" class="hapus text-red-600 font-bold">✕</button>

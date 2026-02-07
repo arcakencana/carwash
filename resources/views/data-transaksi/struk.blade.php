@@ -19,7 +19,7 @@
     <div class="center" style="line-height:1.2; margin-bottom:5px;">
         <h3 style="margin:0; font-size:14px;">{{ env('APP_NAME') }}</h3>
         <p style="margin:0;">Transaksi #{{ $transaksi->kode_transaksi }}</p>
-        <p style="margin:0;">No Pelat Kendaraan {{ $transaksi->no_polisi }}</p>
+        <p style="margin:0;">No Pelat {{ $transaksi->no_polisi }}</p>
         <p style="margin:0;">No Whatsapp {{ $transaksi->no_wa }}</p>
         <p style="margin:0;">{{ date('d-m-Y', strtotime($transaksi->tanggal)) }}</p>
     </div>

@@ -14,6 +14,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
     ->name('dashboard');
+    Route::get('/dashboard/{id}', [App\Http\Controllers\DashboardController::class, 'show'])
+    ->name('dashboard.show');
+    Route::delete('/dashboard/{transaksi}', [App\Http\Controllers\DashboardController::class, 'destroy'])
+    ->name('dashboard.destroy');
 
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])
     ->name('profile.edit');
@@ -32,7 +36,7 @@ Route::middleware('auth')->group(function () {
 
         Route::resource('data-transaksi', App\Http\Controllers\DataTransaksiController::class);
         Route::post('data-transaksi/{transaksi}/bayar', [App\Http\Controllers\DataTransaksiController::class, 'bayar'])->name('data-transaksi.bayar');
-
+        Route::resource('pengeluaran', App\Http\Controllers\PengeluaranHarianController::class);
 
     });
 

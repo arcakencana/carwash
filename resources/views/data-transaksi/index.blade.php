@@ -21,8 +21,8 @@
                     <thead class="bg-gray-100">
                         <tr>
                             <th class="p-2 text-left">Kode</th>
-                            <th class="p-2 text-left">Tanggal</th>
-                            <th class="p-2 text-left">No Pelat Kendaraan</th>
+                            <th class="p-2 text-left">No Pelat</th>
+                            <th class="p-2 text-left">Keterangan</th>
                             <th class="p-2 text-left">No Whatsapp</th>
                             <th class="p-2 text-left">Total</th>
                             <th class="p-2 text-left">Status</th>
@@ -31,13 +31,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($transaksis as $trx)
+                        @foreach ($transaksi as $trx)
                         <tr class="border-t hover:bg-gray-50">
                             <td class="p-2 font-bold">{{ $trx->kode_transaksi }}</td>
-                            <td class="p-2">
+                            {{-- <td class="p-2">
                                 {{ \Carbon\Carbon::parse($trx->tanggal)->format('d M Y') }}
-                            </td>
+                            </td> --}}
                             <td class="p-2">{{ $trx->no_polisi }}</td>
+                            <td class="p-2">{{ $trx->keterangan }}</td>
                             <td class="p-2">{{ $trx->no_wa }}</td>
                             <td class="p-2 text-left font-semibold">
                                 {{ number_format($trx->total_harga) }}
@@ -67,10 +68,16 @@
                     </tbody>
                 </table>
 
-                <!-- Pagination -->
-                <div class="mt-4">
-                    {{ $transaksis->links('vendor.pagination.custom') }}
+                <!-- Total -->
+                <div class="flex justify-end mt-4">
+                    <div class="text-right font-bold text-lg">
+                        Total :
+                        <span class="text-red-600">
+                            Rp {{ number_format($total,0,',','.') }}
+                        </span>
+                    </div>
                 </div>
+
             </div>
 
         </div>

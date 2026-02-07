@@ -18,6 +18,8 @@ return new class extends Migration {
             ->cascadeOnDelete();
             $table->integer('total_harga')->default(0);
             $table->enum('status', ['belum', 'sudah'])->default('belum');
+            $table->enum('jenis_bayar', ['cash', 'qris', 'debit']);
+            $table->string('keterangan');
             $table->timestamps();
         });
     }

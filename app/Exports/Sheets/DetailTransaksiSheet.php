@@ -67,17 +67,49 @@ class DetailTransaksiSheet implements FromCollection, WithHeadings, WithTitle, W
         return [
             AfterSheet::class => function (AfterSheet $event) {
 
-                $event->sheet->getStyle('A1:G1')->getFont()->setBold(true);
+                // Header bold
+                $event->sheet->getStyle('A1:H1')->getFont()->setBold(true);
 
-                // Rupiah
-                $event->sheet->getStyle('F2:H1000')
+                $lastDataRow = $event->sheet->getHighestRow();
+                $totalRow    = $lastDataRow + 1;
+
+                // ===== FORMAT RUPIAH =====
+                $event->sheet->getStyle("F2:H{$lastDataRow}")
                 ->getNumberFormat()
                 ->setFormatCode('"Rp" #,##0');
 
+                // ===== HITUNG TOTAL SUBTOTAL =====
+                $totalSubtotal = DB::table('transaksi_items')
+                ->join('transaksi', 'transaksi.id', '=', 'transaksi_items.transaksi_id')
+                ->whereBetween('transaksi.tanggal', [$this->start, $this->end])
+                ->where('transaksi.status', 'sudah')
+                ->sum('transaksi_items.subtotal');
+
+                // ===== TULIS TOTAL =====
+                $event->sheet->setCellValue("G{$totalRow}", 'TOTAL');
+                $event->sheet->setCellValue("H{$totalRow}", $totalSubtotal);
+
+                // ===== STYLE TOTAL =====
+                $event->sheet->getStyle("G{$totalRow}:H{$totalRow}")
+                ->getFont()->setBold(true);
+
+                $event->sheet->getStyle("H{$totalRow}")
+                ->getNumberFormat()
+                ->setFormatCode('"Rp" #,##0');
+
+                // Garis atas
+                $event->sheet->getStyle("G{$totalRow}:H{$totalRow}")
+                ->getBorders()->getTop()
+                ->setBorderStyle(
+                    \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                );
+
+                // Auto size kolom
                 foreach (range('A', 'H') as $col) {
                     $event->sheet->getColumnDimension($col)->setAutoSize(true);
                 }
             }
         ];
     }
+
 }

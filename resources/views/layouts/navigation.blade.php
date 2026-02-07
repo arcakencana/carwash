@@ -34,6 +34,9 @@
                     <x-nav-link :href="route('data-transaksi.index')" :active="request()->routeIs('data-transaksi')">
                         {{ __('Data Transaksi') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('pengeluaran.index')" :active="request()->routeIs('pengeluaran')">
+                        {{ __('Pengeluaran') }}
+                    </x-nav-link>
                     @endif
 
                     @if(auth()->check() && auth()->user()->role === 'admin')
@@ -131,6 +134,9 @@
             @if(auth()->check() && auth()->user()->role === 'kasir')
             <x-responsive-nav-link :href="route('data-transaksi.index')" :active="request()->routeIs('data-transaksi')">
                 {{ __('Data Transaksi') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('pengeluaran.index')" :active="request()->routeIs('pengeluaran')">
+                {{ __('Pengeluaran') }}
             </x-responsive-nav-link>
             @endif
 

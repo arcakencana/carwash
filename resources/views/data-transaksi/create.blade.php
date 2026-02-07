@@ -1,110 +1,126 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Transaksi Penjualan
-        </h2>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Transaksi Penjualan</h2>
     </x-slot>
 
-    <div class="py-6 max-w-5xl mx-auto">
-        <div class="bg-white p-6 rounded shadow">
-            <form action="{{ route('data-transaksi.store') }}" method="POST">
-                @csrf
+    <div class="py-6 max-w-5xl mx-auto bg-white p-6 rounded shadow">
+        <form action="{{ route('data-transaksi.store') }}" method="POST">
+            @csrf
 
-                <!-- User -->
-                <div class="mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+
+                <div>
                     <label class="block font-semibold">User</label>
-                    <input type="text"
+                    <input
+                    type="text"
                     value="{{ auth()->user()->name }}"
                     class="w-full border rounded p-2 bg-gray-100"
-                    readonly>
+                    readonly
+                    >
                 </div>
 
-                <div class="mb-4">
-                    <label class="block font-semibold">No Pelat Kendaraan</label>
-                    <input type="text"
+                <div>
+                    <label class="block font-semibold">No Pelat</label>
+                    <input
+                    type="text"
                     name="no_polisi"
-                    class="w-full border rounded p-2">
+                    class="w-full border rounded p-2"
+                    >
                 </div>
 
-                <div class="mb-4">
+                <div>
+                    <label class="block font-semibold">Keterangan</label>
+                    <input
+                    type="text"
+                    name="keterangan"
+                    class="w-full border rounded p-2"
+                    oninput="this.value = this.value.toUpperCase()"
+                    >
+                </div>
+
+                <div>
                     <label class="block font-semibold">No Whatsapp</label>
-                    <input type="text"
+                    <input
+                    type="text"
                     name="no_wa"
-                    class="w-full border rounded p-2">
+                    class="w-full border rounded p-2"
+                    >
                 </div>
 
-                <!-- Item Belanja -->
-                <div class="mb-4">
+            </div>
 
-                    <!-- Tambahkan wrapper scroll untuk mobile -->
-                    <div class="overflow-x-auto">
-                        <table class="w-full min-w-[600px] border border-gray-200">
-                            <thead class="bg-gray-100">
-                                <tr>
-                                    <th class="p-2 text-left">Item</th>
-                                    <th class="p-2 text-left">Harga</th>
-                                    <th class="p-2 text-left">Qty</th>
-                                    <th class="p-2 text-left">Diskon</th>
-                                    <th class="p-2 text-left">Subtotal</th>
-                                    <th class="p-2"></th>
-                                </tr>
-                            </thead>
+            <!-- Item Belanja -->
+            <div class="mb-4">
 
-                            <tbody id="items">
-                                <tr>
-                                    <td class="p-2">
-                                        <select name="items[0][id]" class="barang w-full border p-2">
-                                            <option value="">-- Pilih --</option>
-                                            @foreach($barangs as $barang)
-                                            <option value="{{ $barang->id }}"
-                                                data-harga="{{ $barang->harga_jual }}">
-                                                {{ $barang->nama }}
-                                            </option>
-                                            @endforeach
+                <!-- Tambahkan wrapper scroll untuk mobile -->
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-[600px] border border-gray-200">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-2 text-left">Item</th>
+                                <th class="p-2 text-left">Harga</th>
+                                <th class="p-2 text-left">Qty</th>
+                                <th class="p-2 text-left">Diskon</th>
+                                <th class="p-2 text-left">Subtotal</th>
+                                <th class="p-2"></th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="items">
+                            <tr>
+                                <td class="p-2">
+                                    <select name="items[0][id]" class="barang w-full border rounded">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach($barangs as $barang)
+                                        <option value="{{ $barang->id }}"
+                                            data-harga="{{ $barang->harga_jual }}">
+                                            {{ $barang->nama }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+
+                                <td class="p-2 text-right font-mono harga">0</td>
+
+                                <td class="p-2">
+                                    <input type="number"
+                                    name="items[0][qty]"
+                                    value="1"
+                                    min="1"
+                                    class="qty w-16 border rounded">
+                                </td>
+
+                                <!-- DISKON -->
+                                <td class="p-2">
+                                    <div class="flex items-center gap-1">
+                                        <select class="diskon-tipe w-18 border rounded">
+                                            <option value="nominal">Rp</option>
+                                            <option value="persen">%</option>
                                         </select>
-                                    </td>
-
-                                    <td class="p-2 harga">0</td>
-
-                                    <td class="p-2">
                                         <input type="number"
-                                        name="items[0][qty]"
-                                        value="1"
-                                        min="1"
-                                        class="qty w-20 border p-2">
-                                    </td>
+                                        class="diskon w-28 border rounded"
+                                        placeholder="0">
 
-                                    <!-- DISKON -->
-                                    <td class="p-2">
-                                        <div class="flex items-center gap-1">
-                                            <select class="diskon-tipe w-10 border p-2">
-                                                <option value="nominal">Rp</option>
-                                                <option value="persen">%</option>
-                                            </select>
-                                            <input type="number"
-                                            class="diskon w-20 text-right border px-2 py-1"
-                                            placeholder="0">
+                                        <!-- YANG MASUK DB -->
+                                        <input 
+                                        type="hidden"
+                                        name="items[0][diskon]"
+                                        class="diskon-nominal">
+                                    </div>
+                                </td>
 
-                                            <!-- YANG MASUK DB -->
-                                            <input type="hidden"
-                                            name="items[0][diskon]"
-                                            class="diskon-nominal">
-                                        </div>
-                                    </td>
+                                <td class="p-2 text-right font-mono subtotal">0</td>
 
-                                    <td class="p-2 subtotal">0</td>
+                                <td class="p-2">
+                                    <button type="button" class="hapus text-red-600">X</button>
+                                </td>
+                            </tr>
+                        </tbody>
 
-                                    <td class="p-2">
-                                        <button type="button" class="hapus text-red-600">X</button>
-                                    </td>
-                                </tr>
-                            </tbody>
+                    </table>
+                </div>
 
-                        </table>
-                    </div>
-
-                    <button type="button" id="tambah"
-                    class="mt-3 bg-green-600 text-white px-3 py-1 rounded">
+                <button type="button" id="tambah" class="mt-3 bg-green-600 text-white px-3 py-1 rounded">
                     + Tambah Item
                 </button>
             </div>
@@ -113,7 +129,7 @@
                 <div class="w-full max-w-sm bg-gray-50 border rounded p-4 space-y-2 text-sm">
                     <div class="flex justify-between">
                         <span>Total Item</span>
-                        <span id="totalQty" class="font-semibold">0</span>
+                        <span id="totalQty" class="font-mono">0</span>
                     </div>
 
                     <div class="flex justify-between">
@@ -138,21 +154,18 @@
 
             <div class="flex justify-end gap-3 mt-4">
                 <!-- Tombol Kembali -->
-                <a href="{{ route('data-transaksi.index') }}"
-                class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors">
-                Kembali
-            </a>
+                <a href="{{ route('data-transaksi.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors">
+                    Kembali
+                </a>
 
-            <!-- Tombol Simpan -->
-            <button type="submit"
-            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
-            Simpan Transaksi
-        </button>
-    </div>
+                <!-- Tombol Simpan -->
+                <button type="submit"class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                    Simpan Transaksi
+                </button>
+            </div>
 
-</div>
-</form>
-</div>
+        </div>
+    </form>
 </div>
 
 <script>

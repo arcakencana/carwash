@@ -15,12 +15,12 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 
 class RingkasanItemSheet implements
-    FromCollection,
-    WithHeadings,
-    WithStyles,
-    WithTitle,
-    WithEvents,
-    WithCustomStartCell
+FromCollection,
+WithHeadings,
+WithStyles,
+WithTitle,
+WithEvents,
+WithCustomStartCell
 {
     protected string $start;
     protected string $end;
@@ -121,10 +121,50 @@ class RingkasanItemSheet implements
                     ],
                 ]);
 
-                // Format Rupiah
-                $sheet->getStyle('C4:E1000')
+                $lastDataRow = $event->sheet->getHighestRow();
+                $sheet->getStyle("C4:E{$lastDataRow}")
                 ->getNumberFormat()
                 ->setFormatCode('"Rp" #,##0');
+
+                // ================= TOTAL RINGKASAN ITEM =================
+                $totalRow = $lastDataRow + 1;
+
+                // Hitung total dari DB
+                $totals = DB::table('transaksi_items as ti')
+                ->join('transaksi as t', 't.id', '=', 'ti.transaksi_id')
+                ->join('master_barang as mb', 'mb.id', '=', 'ti.master_barang_id')
+                ->whereBetween('t.tanggal', [$this->start, $this->end])
+                ->where('t.status', 'sudah')
+                ->select(
+                    DB::raw('SUM(ti.qty) as total_qty'),
+                    DB::raw('SUM(ti.qty * (ti.harga - mb.harga_modal)) as total_pendapatan'),
+                    DB::raw('SUM(ti.diskon) as total_diskon'),
+                    DB::raw('SUM((ti.qty * (ti.harga - mb.harga_modal)) - ti.diskon) as grand_total')
+                )
+                ->first();
+
+                // Tulis TOTAL
+                $sheet->setCellValue("A{$totalRow}", 'TOTAL');
+                $sheet->setCellValue("B{$totalRow}", $totals->total_qty);
+                $sheet->setCellValue("C{$totalRow}", $totals->total_pendapatan);
+                $sheet->setCellValue("D{$totalRow}", $totals->total_diskon);
+                $sheet->setCellValue("E{$totalRow}", $totals->grand_total);
+
+                // Style TOTAL
+                $sheet->getStyle("A{$totalRow}:E{$totalRow}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => [
+                        'top' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                        ]
+                    ],
+                ]);
+
+                // Format rupiah total
+                $sheet->getStyle("C{$totalRow}:E{$totalRow}")
+                ->getNumberFormat()
+                ->setFormatCode('"Rp" #,##0');
+
 
                 // Auto width kolom
                 foreach (range('A', 'E') as $column) {

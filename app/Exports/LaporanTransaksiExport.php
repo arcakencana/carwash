@@ -18,8 +18,10 @@ class LaporanTransaksiExport implements WithMultipleSheets
     public function sheets(): array
     {
         return [
-            new \App\Exports\Sheets\RingkasanItemSheet($this->start, $this->end),
+            new \App\Exports\Sheets\TransaksiSheet($this->start, $this->end),
             new \App\Exports\Sheets\DetailTransaksiSheet($this->start, $this->end),
+            new \App\Exports\Sheets\DetailPengeluaranSheet($this->start, $this->end),
+            new \App\Exports\Sheets\RingkasanItemSheet($this->start, $this->end),
         ];
     }
 }

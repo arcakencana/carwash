@@ -90,44 +90,14 @@
                         </div>
                     </div>
 
-                    <!-- TOMBOL -->
                     <div class="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-end">
+                        <a href="{{ route('dashboard') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded text-center">
+                            Kembali
+                        </a>
 
-                        <!-- KEMBALI -->
-                        <a href="{{ route('data-transaksi.index') }}"
-                        class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded text-center">
-                        ⬅ Kembali
-                    </a>
+                    </div>
 
-                    @if($transaksi->status !== 'sudah')
-                    <form action="{{ route('data-transaksi.bayar', $transaksi->id) }}"
-                        method="POST"
-                        target="_blank"
-                        class="flex gap-2">
-                        @csrf
-
-                        <select name="jenis_bayar" class="w-28 rounded">
-                            <option value="cash">Cash</option>
-                            <option value="qris">QRIS</option>
-                            <option value="debit">Debit</option>
-                        </select>
-
-                        <input type="hidden" name="grand_total" value="{{ $grandTotal }}">
-
-                        <button type="submit"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold">
-                        💳 Bayar & Cetak
-                    </button>
-                </form>
-                @else
-                <span class="bg-green-600 text-white px-4 py-2 rounded font-semibold">
-                    ✅ Sudah Dibayar
-                </span>
-                @endif
-
+                </div>
             </div>
 
-        </div>
-    </div>
-
-</x-app-layout>
+        </x-app-layout>

@@ -13,11 +13,18 @@ class DataTransaksiController extends Controller
 {
     public function index()
     {
-        $transaksis = Transaksi::with('kasir')
-        ->orderBy('id', 'desc')
-        ->paginate(10);
+        $transaksi = Transaksi::with('kasir')
+        ->whereBetween('tanggal', [
+            now()->startOfDay(),
+            now()->endOfDay()
+        ])
+        ->where('status', 'belum')
+        ->orderBy('id', 'asc')
+        ->get();
 
-        return view('data-transaksi.index', compact('transaksis'));
+        $total = $transaksi->sum('total_harga');
+
+        return view('data-transaksi.index', compact('transaksi', 'total'));
     }
 
     public function create()
@@ -43,6 +50,7 @@ class DataTransaksiController extends Controller
             $transaksi = Transaksi::create([
                 'kode_transaksi'    => 'TRX-' . time(),
                 'no_polisi'         => $request->no_polisi,
+                'keterangan'        => $request->keterangan,
                 'no_wa'             => $request->no_wa,
                 'tanggal'           => now(),
                 'user_id'           => Auth::id(),
@@ -134,7 +142,7 @@ class DataTransaksiController extends Controller
         }
 
         $transaksi->update([
-            'total_harga' => $total,
+            'total_harga' => $total - $totalDiskon,
             'total_diskon' => $totalDiskon,
             'grand_total' => $total - $totalDiskon,
         ]);
@@ -154,9 +162,14 @@ class DataTransaksiController extends Controller
         return view('data-transaksi.show', compact('transaksi', 'items'));
     }
 
-    public function bayar(Transaksi $transaksi)
+    public function bayar(Transaksi $transaksi, Request $request)
     {
-        $transaksi->update(['status' => 'sudah']);
+        $request->validate(['jenis_bayar' => 'required|in:cash,qris,debit']);
+
+        $transaksi->update([
+            'status'        => 'sudah', 
+            'jenis_bayar'   => $request->jenis_bayar
+        ]);
 
         $items = $transaksi->items()->with('barang')->get();
 
@@ -175,4 +188,5 @@ class DataTransaksiController extends Controller
         ->route('data-transaksi.index')
         ->with('success', 'Transaksi berhasil dihapus');
     }
+    
 }
