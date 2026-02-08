@@ -15,6 +15,11 @@ class TransaksiController extends Controller
     {
         $transaksis = Transaksi::with('kasir')
         ->where('user_id', Auth::id())
+        ->whereBetween('tanggal', [
+            now()->startOfDay(),
+            now()->endOfDay()
+        ])
+        ->where('status', 'belum')
         ->orderBy('id', 'desc')
         ->paginate(10);
 
@@ -43,6 +48,7 @@ class TransaksiController extends Controller
             $transaksi = Transaksi::create([
                 'kode_transaksi'    => 'TRX-' . time(),
                 'no_polisi'         => $request->no_polisi,
+                'keterangan'        => $request->keterangan,
                 'no_wa'             => $request->no_wa,
                 'tanggal'           => now(),
                 'user_id'           => Auth::id(),
@@ -91,10 +97,10 @@ class TransaksiController extends Controller
             ->get();
 
             return view('transaksi.show', compact('transaksi', 'items'));
-    }
+        }
 
-    public function destroy(Transaksi $transaksi)
-    {
+        public function destroy(Transaksi $transaksi)
+        {
         //
+        }
     }
-}

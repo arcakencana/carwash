@@ -10,26 +10,46 @@
             <form action="{{ route('transaksi.store') }}" method="POST">
                 @csrf
 
-                <div class="mb-4">
-                    <label class="block font-semibold">User</label>
-                    <input type="text"
-                    value="{{ auth()->user()->name }}"
-                    class="w-full border rounded p-2 bg-gray-100"
-                    readonly>
-                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
 
-                <div class="mb-4">
-                    <label class="block font-semibold">No Pelat Kendaraan</label>
-                    <input type="text"
-                    name="no_polisi"
-                    class="w-full border rounded p-2">
-                </div>
+                    <div>
+                        <label class="block font-semibold">User</label>
+                        <input
+                        type="text"
+                        value="{{ auth()->user()->name }}"
+                        class="w-full border rounded p-2 bg-gray-100"
+                        readonly
+                        >
+                    </div>
 
-                <div class="mb-4">
-                    <label class="block font-semibold">No Whatsapp</label>
-                    <input type="text"
-                    name="no_wa"
-                    class="w-full border rounded p-2">
+                    <div>
+                        <label class="block font-semibold">No Pelat</label>
+                        <input
+                        type="text"
+                        name="no_polisi"
+                        class="w-full border rounded p-2"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold">Keterangan</label>
+                        <input
+                        type="text"
+                        name="keterangan"
+                        class="w-full border rounded p-2"
+                        oninput="this.value = this.value.toUpperCase()"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold">No Whatsapp</label>
+                        <input
+                        type="text"
+                        name="no_wa"
+                        class="w-full border rounded p-2"
+                        >
+                    </div>
+
                 </div>
 
                 <div class="mb-4">
