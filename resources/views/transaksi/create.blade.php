@@ -28,6 +28,15 @@
                         type="text"
                         name="no_polisi"
                         class="w-full border rounded p-2"
+                        maxlength="8"
+                        oninput="
+                        let v = this.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+                        let hurufDepan = v.slice(0,1);
+                        let angka = v.slice(1,5);
+                        let hurufBelakang = v.slice(5,8);
+                        this.value = hurufDepan + angka + hurufBelakang;
+                        "
+                        onkeydown="if(event.key === ' ') event.preventDefault();"
                         >
                     </div>
 
@@ -47,6 +56,9 @@
                         type="text"
                         name="no_wa"
                         class="w-full border rounded p-2"
+                        inputmode="numeric"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                        onkeydown="if(event.key === ' ') event.preventDefault();"
                         >
                     </div>
 

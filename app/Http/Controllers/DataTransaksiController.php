@@ -105,7 +105,11 @@ class DataTransaksiController extends Controller
     public function update(Request $request, $id)
     {
         $transaksi = Transaksi::findOrFail($id);
-        $transaksi->update(['no_polisi' => $request->no_polisi]);
+        $transaksi->update([
+            'no_polisi'     => $request->no_polisi,
+            'keterangan'    => $request->keterangan,
+            'no_wa'         => $request->no_wa
+        ]);
         $transaksi->items()->delete();
 
         $total = 0;
