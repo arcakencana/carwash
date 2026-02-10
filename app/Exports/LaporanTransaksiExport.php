@@ -22,6 +22,7 @@ class LaporanTransaksiExport implements WithMultipleSheets
             new \App\Exports\Sheets\DetailTransaksiSheet($this->start, $this->end),
             new \App\Exports\Sheets\DetailPengeluaranSheet($this->start, $this->end),
             new \App\Exports\Sheets\RingkasanItemSheet($this->start, $this->end),
+            new \App\Exports\Sheets\RekapCashRealSheet($this->start, $this->end),
         ];
     }
 }
